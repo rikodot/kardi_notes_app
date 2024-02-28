@@ -23,7 +23,7 @@ class HttpHelper
 {
   //api settings
   static const String url = "https://www.kardi.tech/notes/handle.php";
-  static String CURRENT_VER = "2.0.4";
+  static String CURRENT_VER = "2.0.5";
   static bool DEV_MODE = false;
 
   //owner key
@@ -59,6 +59,8 @@ class HttpHelper
   static const double scale_step = 0.1;
   static double note_mini_width = 0;
   static double note_mini_height = 0;
+  static double text_height = 0;
+  static double title_height = 0;
 
   //current page
   static PageType current_page = PageType.Notes;
@@ -87,6 +89,8 @@ class HttpHelper
   {
     note_mini_width = 180 * scale;
     note_mini_height = 180 * scale;
+    text_height = 12 * scale;
+    title_height = 18 * scale;
   }
 
   static List<DraggableGridItem> get_new_ordering_notes(BuildContext context, Widget childCurrent)
@@ -104,6 +108,7 @@ class HttpHelper
               String password_temp = '';
               //prompt user to enter the password
               Alert(
+                style: Styles.alert_norm(),
                 context: context,
                 title: 'Enter password',
                 content: Column(
@@ -125,10 +130,7 @@ class HttpHelper
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text(
-                      'Close',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
+                    child: Text('Close', style: Styles.alert_button()),
                   ),
                   DialogButton(
                     onPressed: () {
@@ -160,53 +162,40 @@ class HttpHelper
                       {
                         //if not show error
                         Alert(
+                          style: Styles.alert_closable(),
                           context: context,
                           title: 'Error',
                           desc: 'Wrong password.',
-                          buttons: [
-                            DialogButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              width: 120,
-                              child: const Text(
-                                'OK',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            )
-                          ],
+                          buttons: [],
                         ).show();
                       }
                     },
-                    child: const Text(
-                      'Check',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
+                    child: Text('Check', style: Styles.alert_button()),
                   ),
                 ],
               ).show();
-              return;
             }
-            Navigator.push(
-                context,
-                PageTransition(
-                    alignment: Alignment.bottomCenter,
-                    curve: Curves.easeInOut,
-                    duration: Duration(milliseconds: 600),
-                    reverseDuration: Duration(milliseconds: 600),
-                    type: PageTransitionType.size,
-                    child: EditorPage(
-                        noteKey: HttpHelper.display_notes[i]["key"],
-                        content: HttpHelper.display_notes[i]["content"],
-                        title: HttpHelper.display_notes[i]["title"],
-                        index: i,
-                        blur: HttpHelper.display_notes[i]["blur"],
-                        password: '',
-                        color: HttpHelper.display_notes[i]["color"] ?? HttpHelper.default_note_color!.value),
-                    childCurrent: childCurrent));
+            else
+            {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      alignment: Alignment.bottomCenter,
+                      curve: Curves.easeInOut,
+                      duration: Duration(milliseconds: 600),
+                      reverseDuration: Duration(milliseconds: 600),
+                      type: PageTransitionType.size,
+                      child: EditorPage(
+                          noteKey: HttpHelper.display_notes[i]["key"],
+                          content: HttpHelper.display_notes[i]["content"],
+                          title: HttpHelper.display_notes[i]["title"],
+                          index: i,
+                          blur: HttpHelper.display_notes[i]["blur"],
+                          password: '',
+                          color: HttpHelper.display_notes[i]["color"] ??
+                              HttpHelper.default_note_color!.value),
+                      childCurrent: childCurrent));
+            }
           },
           //onLongPress: () {} //cant use long press, because it is used for dragging
           child: Material(

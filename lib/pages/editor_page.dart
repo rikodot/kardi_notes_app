@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'dart:ui';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:cron/cron.dart';
+import '../models/utils.dart';
 
 class EditorPage extends StatefulWidget {
   EditorPage({
@@ -60,6 +61,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
           //prompt user to apply changes or not
           Alert(
+            style: Styles.alert_norm(),
             context: context,
             title: 'Note has changed',
             content: Column(
@@ -94,6 +96,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                       {
                         String password_temp = '';
                         Alert(
+                          style: Styles.alert_norm(),
                           context: context,
                           title: 'Password has changed',
                           content: Column(
@@ -116,10 +119,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                               },
-                              child: const Text(
-                                'Close note',
-                                style: TextStyle(color: Colors.white, fontSize: 20),
-                              ),
+                              child: Text('Close note', style: Styles.alert_button()),
                             ),
                             DialogButton(
                               onPressed: () {
@@ -144,6 +144,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                 {
                                   //if not show error
                                   Alert(
+                                    style: Styles.alert_norm(),
                                     context: context,
                                     title: 'Error',
                                     desc: 'Wrong password.',
@@ -154,22 +155,13 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                           Navigator.pop(context);
                                         },
                                         width: 120,
-                                        child: const Text(
-                                          'OK',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                          ),
-                                        ),
+                                        child: Text('OK', style: Styles.alert_button()),
                                       )
                                     ],
                                   ).show();
                                 }
                               },
-                              child: const Text(
-                                'Check',
-                                style: TextStyle(color: Colors.white, fontSize: 20),
-                              ),
+                              child: Text('Check', style: Styles.alert_button()),
                             ),
                           ],
                         ).show();
@@ -179,20 +171,14 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                   Navigator.pop(context); //pop alert
                   last_bg_done = true; //this bool prevents stacking multiple alerts on top of each other
                 },
-                child: Text(
-                  "Yes",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
+                child: Text("Yes", style: Styles.alert_button()),
               ),
               DialogButton(
                 onPressed: () {
                   last_bg_done = true; //this bool prevents stacking multiple alerts on top of each other
                   Navigator.pop(context); //pop alert
                 },
-                child: Text(
-                  "No",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
+                child: Text("No", style: Styles.alert_button()),
               )
             ],
           ).show();
@@ -256,80 +242,77 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                   heroTag: null,
                   onPressed: () async {
                     Color new_color = Color(widget.color);
-                    showDialog(context: context,
-                      builder: (BuildContext context)
-                      {
-                        return AlertDialog(
-                          title: const Text('Select color'),
-                          content: SingleChildScrollView(
-                              child: ColorPicker(
-                                pickerColor: Color(widget.color),
-                                onColorChanged: (Color color) {
-                                  new_color = color;
-                                },
-                              )
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () async {
-                                if (widget.index != -1)
-                                {
-                                  bool res = await HttpHelper.editNoteColor(widget.noteKey, new_color.value);
-                                  if (!res)
-                                  {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
-                                        backgroundColor: Colors.redAccent,
-                                        duration: const Duration(seconds: 3),
-                                      ),
-                                    );
-                                  }
-                                  else
-                                  {
-                                    widget.color = new_color.value;
-                                    HttpHelper.display_notes[widget.index]["color"] = new_color.value;
-                                    HttpHelper.notes[index_in_notes]["color"] = new_color.value;
-                                  }
-                                }
-                                Navigator.pop(context);
-                              },
-                              child: const Text('OK'),
-                            ),
-                            TextButton(
-                              onPressed: () async { Navigator.pop(context); },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                if (widget.index != -1 && widget.color != HttpHelper.default_note_color!.value)
-                                {
-                                  bool res = await HttpHelper.editNoteColor(widget.noteKey, HttpHelper.default_note_color!.value);
-                                  if (!res)
-                                  {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: const Text('Failed to reset the color', style: TextStyle(color: Colors.white)),
-                                        backgroundColor: Colors.redAccent,
-                                        duration: const Duration(seconds: 3),
-                                      ),
-                                    );
-                                  }
-                                  else
-                                  {
-                                    widget.color = HttpHelper.default_note_color!.value;
-                                    HttpHelper.display_notes[widget.index]["color"] = null;
-                                    HttpHelper.notes[index_in_notes]["color"] = null;
-                                  }
-                                }
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Reset'),
-                            )
-                          ],
-                        );
-                      },
-                    );
+                    await Alert(
+                      style: Styles.alert_norm(),
+                      context: context,
+                      title: 'Select color',
+                      content: SingleChildScrollView(
+                          child: ColorPicker(
+                            pickerColor: Color(widget.color),
+                            onColorChanged: (Color color) {
+                              new_color = color;
+                            },
+                          )
+                      ),
+                      buttons: [
+                        DialogButton(
+                          onPressed: () async {
+                            if (widget.index != -1)
+                            {
+                              bool res = await HttpHelper.editNoteColor(widget.noteKey, new_color.value);
+                              if (!res)
+                              {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
+                                    backgroundColor: Colors.redAccent,
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                              }
+                              else
+                              {
+                                widget.color = new_color.value;
+                                HttpHelper.display_notes[widget.index]["color"] = new_color.value;
+                                HttpHelper.notes[index_in_notes]["color"] = new_color.value;
+                              }
+                            }
+                            Navigator.pop(context);
+                          },
+                          child: Text('OK', style: Styles.alert_button()),
+                        ),
+                        DialogButton(
+                          onPressed: () async { Navigator.pop(context); },
+                          child: Text('Cancel', style: Styles.alert_button()),
+                        ),
+                        DialogButton(
+                          onPressed: () async {
+                            if (widget.index != -1 && widget.color != HttpHelper.default_note_color!.value)
+                            {
+                              bool res = await HttpHelper.editNoteColor(widget.noteKey, HttpHelper.default_note_color!.value);
+                              if (!res)
+                              {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text('Failed to reset the color', style: TextStyle(color: Colors.white)),
+                                    backgroundColor: Colors.redAccent,
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                              }
+                              else
+                              {
+                                widget.color = HttpHelper.default_note_color!.value;
+                                HttpHelper.display_notes[widget.index]["color"] = null;
+                                HttpHelper.notes[index_in_notes]["color"] = null;
+                              }
+                            }
+                            Navigator.pop(context);
+                          },
+                          child: Text('Reset', style: Styles.alert_button()),
+                        )
+                      ],
+                    ).show();
                   },
                   tooltip: 'Save note',
                   child: Icon(Icons.color_lens),
@@ -354,118 +337,107 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                     {
                       writeNote(false).then((value) {
                         if (value == -1) {
-                          Alert(context: context, title: "ERROR", desc: "Failed to save data, check internet connection.").show();
+                          Alert(
+                            style: Styles.alert_closable(),
+                            context: context,
+                            title: "ERROR",
+                            desc: "Failed to save data, check internet connection.",
+                            buttons: [],
+                          ).show();
                         } else if (value == -2) {
                           //mismatch of unedited note with data on server, should we overwrite?
-                          showDialog(
+                          Alert(
+                            style: Styles.alert_norm(),
                             context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                backgroundColor: Colors.white,
-                                title: Text(
-                                  'Note has been edited from another device, overwrite?',
-                                  style: GoogleFonts.poppins(fontSize: 30),
-                                ),
-                                content: RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'This note has been edited from another device and saving these changes will discard the changes made on the other device.\n'
-                                            'Do you want to overwrite the changes made on the other device?\n\n'
-                                            'Example:\n'
-                                            'This note was "123". You opened it on your computer and on your mobile at the same time.\n'
-                                            'After some time you changed the note on your computer to "123abc". Some time later you opened the note on the phone without reloading (so note was still saying "123").\n'
-                                            'On the phone you edited it to "123xyz" and this alert showed up. If you press ',
-                                        style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54),
-                                      ),
-                                      WidgetSpan(
-                                        child: Icon(Icons.check, size: 14),
-                                      ),
-                                      TextSpan(
-                                        text: ' "123xyz" will be saved and "123abc" discarded.\n'
-                                            'If you press ',
-                                        style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54),
-                                      ),
-                                      WidgetSpan(
-                                        child: Icon(Icons.cancel_outlined, size: 14),
-                                      ),
-                                      TextSpan(
-                                        text: ' "123xyz" will be discarded and "123abc" will be saved.',
-                                        style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54),
-                                      ),
-                                    ],
+                            title: 'Note has been edited from another device, overwrite?',
+                            content: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'This note has been edited from another device and saving these changes will discard the changes made on the other device.\n'
+                                        'Do you want to overwrite the changes made on the other device?\n\n'
+                                        'Example:\n'
+                                        'This note was "123". You opened it on your computer and on your mobile at the same time.\n'
+                                        'After some time you changed the note on your computer to "123abc". Some time later you opened the note on the phone without reloading (so note was still saying "123").\n'
+                                        'On the phone you edited it to "123xyz" and this alert showed up. If you press ',
+                                    style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54),
                                   ),
-                                ),
-                                actions: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ElevatedButton(
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                            MaterialStateProperty.all(
-                                                Colors.amber)),
-                                        child: Icon(
-                                          Icons.check,
-                                          color: Colors.white,
-                                          shadows: [
-                                            Shadow(
-                                                color: Colors.black,
-                                                offset: Offset(1, 1))
-                                          ],
-                                        ),
-                                        onPressed: () {
-                                          writeNote(true).then((value) {
-                                            if (value == -1) {
-                                              Alert(context: context, title: "ERROR", desc: "Failed to save data, check internet connection.").show();
-                                            } else {
-                                              //update our values so we dont get false positive of unsaved changes
-                                              widget.title = _titleController.text;
-                                              widget.content = HttpHelper.encrypt_content(_contentController.text, widget.password);
-
-                                              //this avoids making local duplicates of a note when making a new one and saving multiple times
-                                              widget.index = value;
-                                              index_in_notes = HttpHelper.notes.indexWhere((element) => element["key"] == widget.noteKey);
-
-                                              //show small green text on the bottom for 3 seconds to indicate that the note was saved
-                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                                content: Text(
-                                                  'Saved',
-                                                  style: GoogleFonts.poppins(fontSize: 20),
-                                                ),
-                                                backgroundColor: Colors.green,
-                                                duration: Duration(seconds: 3),
-                                              ));
-                                            }
-                                            Navigator.of(context).pop();
-                                          });
-                                        },
-                                      ),
-                                      SizedBox(width: 10),
-                                      ElevatedButton(
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                            MaterialStateProperty.all(
-                                                Colors.amber)),
-                                        child: Icon(
-                                          Icons.cancel_outlined,
-                                          color: Colors.white,
-                                          shadows: [
-                                            Shadow(
-                                                color: Colors.black,
-                                                offset: Offset(1, 1))
-                                          ],
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
+                                  WidgetSpan(
+                                    child: Icon(Icons.check, size: 14),
+                                  ),
+                                  TextSpan(
+                                    text: ' "123xyz" will be saved and "123abc" discarded.\n'
+                                        'If you press ',
+                                    style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54),
+                                  ),
+                                  WidgetSpan(
+                                    child: Icon(Icons.cancel_outlined, size: 14),
+                                  ),
+                                  TextSpan(
+                                    text: ' "123xyz" will be discarded and "123abc" will be saved.',
+                                    style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54),
                                   ),
                                 ],
-                              );
-                            },
-                          );
+                              ),
+                            ),
+                            buttons: [
+                              DialogButton(
+                                child: Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(color: Colors.black, offset: Offset(1, 1))
+                                  ],
+                                ),
+                                onPressed: () {
+                                  writeNote(true).then((value) {
+                                    if (value == -1) {
+                                      Alert(
+                                        style: Styles.alert_closable(),
+                                        context: context,
+                                        title: "ERROR",
+                                        desc: "Failed to save data, check internet connection.",
+                                        buttons: [],
+                                      ).show();
+                                    } else {
+                                      //update our values so we dont get false positive of unsaved changes
+                                      widget.title = _titleController.text;
+                                      widget.content = HttpHelper.encrypt_content(_contentController.text, widget.password);
+
+                                      //this avoids making local duplicates of a note when making a new one and saving multiple times
+                                      widget.index = value;
+                                      index_in_notes = HttpHelper.notes.indexWhere((element) => element["key"] == widget.noteKey);
+
+                                      //show small green text on the bottom for 3 seconds to indicate that the note was saved
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                        content: Text(
+                                          'Saved',
+                                          style: GoogleFonts.poppins(fontSize: 20),
+                                        ),
+                                        backgroundColor: Colors.green,
+                                        duration: Duration(seconds: 3),
+                                      ));
+                                    }
+                                    Navigator.of(context).pop();
+                                  });
+                                },
+                              ),
+                              DialogButton(
+                                child: Icon(
+                                  Icons.cancel_outlined,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                        color: Colors.black,
+                                        offset: Offset(1, 1))
+                                  ],
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          ).show();
                         } else {
                           //update our values so we dont get false positive of unsaved changes
                           widget.title = _titleController.text;
@@ -497,7 +469,13 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                     //call HttpHelper.getNote() and wait for it to finish then check the return value and call setState() to rebuild the page
                     HttpHelper.getNote(widget.noteKey, widget.index, check_if_same: true).then((value) {
                       if (value.first == false) {
-                        Alert(context: context, title: "ERROR", desc: "Failed to get data, check internet connection.").show();
+                        Alert(
+                          style: Styles.alert_closable(),
+                          context: context,
+                          title: "ERROR",
+                          desc: "Failed to get data, check internet connection.",
+                          buttons: [],
+                        ).show();
                       } else {
                         //prepare text if note same
                         String same = ((value.elementAt(1) == true) ? 'no changes' : 'changes applied');
@@ -532,6 +510,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                           {
                             String password_temp = '';
                             Alert(
+                              style: Styles.alert_norm(),
                               context: context,
                               title: 'Password has changed',
                               content: Column(
@@ -554,10 +533,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                     Navigator.pop(context);
                                     Navigator.pop(context);
                                   },
-                                  child: const Text(
-                                    'Close note',
-                                    style: TextStyle(color: Colors.white, fontSize: 20),
-                                  ),
+                                  child: Text('Close note', style: Styles.alert_button()),
                                 ),
                                 DialogButton(
                                   onPressed: () {
@@ -582,6 +558,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                     {
                                       //if not show error
                                       Alert(
+                                        style: Styles.alert_norm(),
                                         context: context,
                                         title: 'Error',
                                         desc: 'Wrong password.',
@@ -592,22 +569,13 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                               Navigator.pop(context);
                                             },
                                             width: 120,
-                                            child: const Text(
-                                              'OK',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                              ),
-                                            ),
+                                            child: Text('OK', style: Styles.alert_button()),
                                           )
                                         ],
                                       ).show();
                                     }
                                   },
-                                  child: const Text(
-                                    'Check',
-                                    style: TextStyle(color: Colors.white, fontSize: 20),
-                                  ),
+                                  child: Text('Check', style: Styles.alert_button()),
                                 ),
                               ],
                             ).show();
@@ -625,6 +593,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                   onPressed: () {
                     String temp_password = widget.password;
                     Alert(
+                      style: Styles.alert_norm(),
                       context: context,
                       title: 'Note password',
                       content: Column(
@@ -659,10 +628,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
+                          child: Text('Cancel', style: Styles.alert_button()),
                         ),
                         DialogButton(
                           onPressed: () {
@@ -672,24 +638,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                             HttpHelper.mismatchNoteCheck(widget.noteKey, widget.title, widget.content).then((result_mismatch) {
                               if (!result_mismatch) {
                                 Alert(
+                                  style: Styles.alert_closable(),
                                   context: context,
                                   title: 'Error',
                                   desc: 'The note has been modified on another device. Please reload notes and try again.',
-                                  buttons: [
-                                    DialogButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      width: 120,
-                                      child: const Text(
-                                        'OK',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    )
-                                  ],
+                                  buttons: [],
                                 ).show();
                               }
                               else
@@ -724,59 +677,40 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                       //update content on the server (encrypt or decrypt) - overwrite true because we already checked for mismatch
                                       writeNote(true).then((value) {
                                         if (value == -1) {
-                                          Alert(context: context, title: "ERROR", desc: "Failed to save data, check internet connection.").show();
+                                          Alert(
+                                            style: Styles.alert_closable(),
+                                            context: context,
+                                            title: "ERROR",
+                                            desc: "Failed to save data, check internet connection.",
+                                            buttons: [],
+                                          ).show();
                                         } else {
                                           //update our values so we dont get false positive and weird errors (content is already updated)
                                           widget.title = _titleController.text;
                                           widget.index = value;
                                           index_in_notes = HttpHelper.notes.indexWhere((element) => element["key"] == widget.noteKey);
                                           Alert(
+                                            style: Styles.alert_closable(),
                                             context: context,
                                             title: 'Success',
                                             desc: 'Password has been changed successfully.',
+                                            buttons: [],
                                             closeFunction: () {
+                                              //we explicitly define close func as we need to refresh state
                                               Navigator.pop(context);
                                               setState(() {});
                                             },
-                                            buttons: [
-                                              DialogButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                  setState(() {});
-                                                },
-                                                width: 120,
-                                                child: const Text(
-                                                  'OK',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20),
-                                                ),
-                                              )
-                                            ],
                                           ).show();
                                         }
                                       });
                                     }
                                     else {
                                       Alert(
+                                        style: Styles.alert_closable(),
                                         context: context,
                                         title: 'Error',
                                         desc: 'Failed to change the password.',
-                                        buttons: [
-                                          DialogButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            width: 120,
-                                            child: const Text(
-                                              'OK',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                          )
-                                        ],
+                                        buttons: [],
                                       ).show();
                                     }
                                   });
@@ -784,33 +718,17 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                 else
                                 {
                                   Alert(
+                                    style: Styles.alert_closable(),
                                     context: context,
                                     title: 'Error',
                                     desc: 'The password is the same as the old one.',
-                                    buttons: [
-                                      DialogButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        width: 120,
-                                        child: const Text(
-                                          'OK',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                      )
-                                    ],
+                                    buttons: [],
                                   ).show();
                                 }
                               }
                             });
                           },
-                          child: const Text(
-                            'Save',
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
+                          child: Text('Save', style: Styles.alert_button()),
                         ),
                       ],
                     ).show();
@@ -825,16 +743,12 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                     if (widget.index != -1) {
                       bool res = await HttpHelper.editNoteBlur(widget.noteKey, !widget.blur);
                       if (!res) {
-                        Alert(context: context,
+                        Alert(
+                          style: Styles.alert_closable(),
+                          context: context,
                           title: 'Error',
                           desc: 'Failed to change the blur state.',
-                          buttons: [
-                            DialogButton(
-                              onPressed: () async { Navigator.pop(context); },
-                              width: 120,
-                              child: const Text('OK', style: TextStyle(color: Colors.white, fontSize: 20)),
-                            )
-                          ],
+                          buttons: [],
                         ).show();
                       } else {
                         widget.blur = !widget.blur;
@@ -853,81 +767,62 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                   onPressed: () {
                     /* dont lose content, confirmation */
                     if (widget.index != -1 || _contentController.text.isNotEmpty || _titleController.text.isNotEmpty) {
-                      showDialog(
+                      Alert(
+                        style: Styles.alert_norm(),
                         context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            backgroundColor: Colors.white,
-                            title: Text(
-                              'Are you sure?',
-                              style: GoogleFonts.poppins(fontSize: 30),
+                        title: 'Are you sure?',
+                        buttons: [
+                          DialogButton(
+                            child: Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(color: Colors.black, offset: Offset(1, 1))
+                              ],
                             ),
-                            actions: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                        MaterialStateProperty.all(
-                                            Colors.amber)),
-                                    child: Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(
-                                            color: Colors.black,
-                                            offset: Offset(1, 1))
-                                      ],
-                                    ),
-                                    onPressed: () {
-                                      deleteNote().then((value) {
-                                        if (value == false) {
-                                          Alert(context: context, title: "ERROR", desc: "Failed to delete data, check internet connection.").show();
-                                        } else {
-                                          Navigator.push(
-                                              context,
-                                              /*MaterialPageRoute(
+                            onPressed: () {
+                              deleteNote().then((value) {
+                                if (value == false) {
+                                  Alert(
+                                    style: Styles.alert_closable(),
+                                    context: context,
+                                    title: "ERROR",
+                                    desc: "Failed to delete data, check internet connection.",
+                                    buttons: [],
+                                  ).show();
+                                } else {
+                                  Navigator.push(
+                                      context,
+                                      /*MaterialPageRoute(
                                               builder: (BuildContext context) => NotesPage()));*/
-                                              PageTransition(
-                                                  alignment: Alignment.bottomCenter,
-                                                  curve: Curves.easeInOut,
-                                                  duration:
-                                                  Duration(milliseconds: 600),
-                                                  reverseDuration:
-                                                  Duration(milliseconds: 600),
-                                                  type: PageTransitionType.size,
-                                                  child: NotesPage(),
-                                                  childCurrent: this.widget));
-                                        }
-                                      });
-                                    },
-                                  ),
-                                  SizedBox(width: 10),
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                        MaterialStateProperty.all(
-                                            Colors.amber)),
-                                    child: Icon(
-                                      Icons.cancel_outlined,
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(
-                                            color: Colors.black,
-                                            offset: Offset(1, 1))
-                                      ],
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                                      PageTransition(
+                                          alignment: Alignment.bottomCenter,
+                                          curve: Curves.easeInOut,
+                                          duration:
+                                          Duration(milliseconds: 600),
+                                          reverseDuration:
+                                          Duration(milliseconds: 600),
+                                          type: PageTransitionType.size,
+                                          child: NotesPage(),
+                                          childCurrent: this.widget));
+                                }
+                              });
+                            },
+                          ),
+                          DialogButton(
+                            child: Icon(
+                              Icons.cancel_outlined,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(color: Colors.black, offset: Offset(1, 1))
+                              ],
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ).show();
                     }
                     /* no content, no confirmation */
                     else {
@@ -954,66 +849,47 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                   onPressed: () async {
                     /* content changed, confirmation */
                     if (HttpHelper.encrypt_content(_contentController.text, widget.password) != widget.content || _titleController.text != widget.title) {
-                      await showDialog(
+                      Alert(
+                        style: Styles.alert_norm(),
                         context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            backgroundColor: Colors.white,
-                            title: Text(
-                              'Changes detected, discard them?',
-                              style: GoogleFonts.poppins(fontSize: 30),
+                        title: 'Changes detected, discard them?',
+                        buttons: [
+                          DialogButton(
+                            child: Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(color: Colors.black, offset: Offset(1, 1))
+                              ],
                             ),
-                            actions: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty.all(Colors.amber)
-                                    ),
-                                    child: Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(color: Colors.black, offset: Offset(1, 1))
-                                      ],
-                                    ),
-                                    onPressed: () async {
-                                      Navigator.pop(context);
-                                      Navigator.push(context,
-                                          /*MaterialPageRoute(builder: (BuildContext context) => NotesPage()));*/
-                                          PageTransition(
-                                              alignment: Alignment.bottomCenter,
-                                              curve: Curves.easeInOut,
-                                              duration: Duration(milliseconds: 600),
-                                              reverseDuration: Duration(milliseconds: 600),
-                                              type: PageTransitionType.size,
-                                              child: NotesPage(),
-                                              childCurrent: this.widget));
-                                    },
-                                  ),
-                                  SizedBox(width: 10),
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty.all(Colors.amber)
-                                    ),
-                                    child: Icon(
-                                      Icons.cancel_outlined,
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(color: Colors.black, offset: Offset(1, 1))
-                                      ],
-                                    ),
-                                    onPressed: () async {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              Navigator.push(context,
+                                  /*MaterialPageRoute(builder: (BuildContext context) => NotesPage()));*/
+                                  PageTransition(
+                                      alignment: Alignment.bottomCenter,
+                                      curve: Curves.easeInOut,
+                                      duration: Duration(milliseconds: 600),
+                                      reverseDuration: Duration(milliseconds: 600),
+                                      type: PageTransitionType.size,
+                                      child: NotesPage(),
+                                      childCurrent: this.widget));
+                            },
+                          ),
+                          DialogButton(
+                            child: Icon(
+                              Icons.cancel_outlined,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(color: Colors.black, offset: Offset(1, 1))
+                              ],
+                            ),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ).show();
                     }
                     /* no changes, no confirmation */
                     else

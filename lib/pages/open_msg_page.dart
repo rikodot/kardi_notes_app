@@ -5,6 +5,7 @@ import 'package:kardi_notes/pages/messages_page.dart';
 import 'package:page_transition/page_transition.dart';
 import '../models/data_sync.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import '../models/utils.dart';
 
 class OpenMsgPage extends StatefulWidget {
   OpenMsgPage({
@@ -41,19 +42,11 @@ class _OpenMsgPageState extends State<OpenMsgPage> with SingleTickerProviderStat
           }
           else {
             Alert(
+              style: Styles.alert_closable(),
               context: context,
               title: "Error",
               desc: "There has been an error, this massage may not be marked as seen.",
-              buttons: [
-                DialogButton(
-                  onPressed: () => Navigator.pop(context),
-                  width: 120,
-                  child: Text(
-                    "OK",
-                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 20),
-                  ),
-                )
-              ],
+              buttons: [],
             ).show();
           }
         });

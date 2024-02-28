@@ -8,7 +8,8 @@ Application is easy to use, mostly self explanatory with hints and example in ca
 <p>
   More information can be found at https://www.kardi.tech/#notes<br>
 Detailed update log can be found at https://www.kardi.tech/notes/<br>
-Privacy policy can be found at https://www.kardi.tech/privacy-policy/
+Privacy policy can be found at https://www.kardi.tech/privacy-policy/<br>
+Source code for the server logic is in [this repository](https://github.com/rikodot/kardi_notes_api)
 </p>
 
 ## Building
@@ -23,6 +24,8 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 
 
 ## TODO
+- [ ] new note with title and no content -> save & go back -> refresh notes -> false positive changes found
+- [ ] closable alert cant be closed by clicking horizontally next to it (diagonally or vertically works)
 - [ ] site css & js fix - a lot of useless properties, messy code, slideshow can only be once on site, problem if height too low etc etc
 - [ ] dragdown to refresh and dragup to navigate -> false positive when moving note with new system
 - [ ] dragdown to refresh and dragup to navigate -> probably false positive when scrolling up and down on phone (not tested)

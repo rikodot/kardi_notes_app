@@ -91,70 +91,83 @@ class _MessagesPageState extends State<MessagesPage> {
                 if (_isOpened) FloatingActionButton(
                   heroTag: null,
                   onPressed: () {
-                    //show dialog to get title and content of feedback
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("Send feedback"),
-                            content: SizedBox(
-                              width: Utils.logical_size(use_media: true, context: context).width * 0.8,
-                              height: Utils.logical_size(use_media: true, context: context).height * 0.3,
-                              child: TextField(
-                                controller: _feedbackController,
-                                style: GoogleFonts.poppins(fontSize: 16),
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    counterText: '',
-                                    hintText: 'Write your feedback here!'
-                                ),
-                                expands: true,
-                                maxLines: null,
-                                minLines: null,
-                                keyboardType: TextInputType.multiline,
-                                inputFormatters: [FilteringTextInputFormatter.deny(RegExp('\r'))],
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: Text("Cancel"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  _feedbackController.clear();
-                                },
-                              ),
-                              TextButton(
-                                child: Text("Send"),
-                                onPressed: () {
-                                  if (_feedbackController.text.isEmpty) {
-                                    Alert(context: context, title: "ERROR", desc: "Feedback cannot be empty.").show();
-                                    return;
-                                  }
-                                  //call HttpHelper.sendFeedback() and wait for it to finish then check the return value and show an alert
-                                  HttpHelper.sendFeedback(_feedbackController.text).then((value) {
-                                    if (value == -1) {
-                                      Alert(context: context, title: "ERROR", desc: "Failed to send feedback, check internet connection.").show();
-                                    } else {
-                                      HttpHelper.msgs.insert(0, {
-                                        "title": "Your Feedback",
-                                        "content": _feedbackController.text,
-                                        "creation_date": DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(value * 1000, isUtc: false)),
-                                        "seen": 1,
-                                        "is_feedback": 1,
-                                        "seen_by_dev": 0
-                                      });
-                                      Alert(context: context, title: "SUCCESS", desc: "Feedback sent successfully.").show();
-                                      Navigator.of(context).pop();
-                                      setState(() {});
-                                      _feedbackController.clear();
-                                    }
-                                  });
-                                },
-                              ),
-                            ],
-                          );
-                        }
-                    );
+                    Alert(
+                    style: Styles.alert_norm(),
+                    context: context,
+                    title: 'Send feedback',
+                    content: SizedBox(
+                      width: Utils.logical_size(use_media: true, context: context).width * 0.8,
+                      height: Utils.logical_size(use_media: true, context: context).height * 0.3,
+                      child: TextField(
+                        controller: _feedbackController,
+                        style: GoogleFonts.poppins(fontSize: 16),
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            counterText: '',
+                            hintText: 'Write your feedback here!'
+                        ),
+                        expands: true,
+                        maxLines: null,
+                        minLines: null,
+                        keyboardType: TextInputType.multiline,
+                        inputFormatters: [FilteringTextInputFormatter.deny(RegExp('\r'))],
+                      ),
+                    ),
+                    buttons: [
+                      DialogButton(
+                        child: Text("Cancel", style: Styles.alert_button()),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _feedbackController.clear();
+                        },
+                      ),
+                      DialogButton(
+                        child: Text("Send", style: Styles.alert_button()),
+                        onPressed: () {
+                          if (_feedbackController.text.isEmpty) {
+                            Alert(
+                              style: Styles.alert_closable(),
+                              context: context,
+                              title: "ERROR",
+                              desc: "Feedback cannot be empty.",
+                              buttons: [],
+                            ).show();
+                          }
+                          //call HttpHelper.sendFeedback() and wait for it to finish then check the return value and show an alert
+                          HttpHelper.sendFeedback(_feedbackController.text).then((value) {
+                            if (value == -1) {
+                              Alert(
+                                style: Styles.alert_closable(),
+                                context: context,
+                                title: "ERROR",
+                                desc: "Failed to send feedback, check internet connection.",
+                                buttons: [],
+                              ).show();
+                            } else {
+                              HttpHelper.msgs.insert(0, {
+                                "title": "Your Feedback",
+                                "content": _feedbackController.text,
+                                "creation_date": DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(value * 1000, isUtc: false)),
+                                "seen": 1,
+                                "is_feedback": 1,
+                                "seen_by_dev": 0
+                              });
+                              Alert(
+                                style: Styles.alert_closable(),
+                                context: context,
+                                title: "SUCCESS",
+                                desc: "Feedback sent successfully.",
+                                buttons: [],
+                              ).show();
+                              Navigator.of(context).pop();
+                              setState(() {});
+                              _feedbackController.clear();
+                            }
+                          });
+                        },
+                      ),
+                    ],
+                  ).show();
                   },
                   tooltip: 'Send feedback',
                   child: const Icon(Icons.feedback_outlined),
@@ -165,7 +178,13 @@ class _MessagesPageState extends State<MessagesPage> {
                   onPressed: () {
                     HttpHelper.getMessages().then((value) {
                       if (value == false) {
-                        Alert(context: context, title: "ERROR", desc: "Failed to get messages, check internet connection.").show();
+                        Alert(
+                          style: Styles.alert_closable(),
+                          context: context,
+                          title: "ERROR",
+                          desc: "Failed to get messages, check internet connection.",
+                          buttons: [],
+                        ).show();
                       } else {
                         //show small green text on the bottom for 3 seconds to indicate that notes were downloaded
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -225,7 +244,13 @@ class _MessagesPageState extends State<MessagesPage> {
               {
                 HttpHelper.getMessages().then((value) {
                   if (value == false) {
-                    Alert(context: context, title: "ERROR", desc: "Failed to get messages, check internet connection.").show();
+                    Alert(
+                      style: Styles.alert_closable(),
+                      context: context,
+                      title: "ERROR",
+                      desc: "Failed to get messages, check internet connection.",
+                      buttons: [],
+                    ).show();
                   } else {
                     //show small green text on the bottom for 3 seconds to indicate that notes were downloaded
                     ScaffoldMessenger.of(context).showSnackBar(

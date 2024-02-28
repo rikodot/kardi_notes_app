@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/widgets.dart';
-
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'data_sync.dart';
 
 //pass by reference workaround
@@ -39,6 +41,34 @@ class Utils {
 
   static int now({bool ms = false}) {
     return DateTime.now().millisecondsSinceEpoch ~/ (ms ? 1 : 1000);
+  }
+}
+
+class Styles
+{
+  static AlertStyle alert_norm()
+  {
+    return AlertStyle(
+      animationType: AnimationType.grow,
+      isCloseButton: false,
+      isOverlayTapDismiss: false,
+      titleStyle: GoogleFonts.poppins(fontSize: HttpHelper.title_height),
+      descStyle: GoogleFonts.poppins(fontSize: HttpHelper.text_height),
+    );
+  }
+  static AlertStyle alert_closable()
+  {
+    return AlertStyle(
+      animationType: AnimationType.grow,
+      isCloseButton: true, //the 'x' in the top right, to hide default 'close' button define property 'buttons: []'
+      isOverlayTapDismiss: true,
+      titleStyle: GoogleFonts.poppins(fontSize: HttpHelper.title_height),
+      descStyle: GoogleFonts.poppins(fontSize: HttpHelper.text_height),
+    );
+  }
+  static TextStyle alert_button()
+  {
+    return GoogleFonts.poppins(color: Color(0xF0F0F0F0), fontSize: HttpHelper.text_height);
   }
 }
 

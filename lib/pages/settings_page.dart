@@ -115,71 +115,66 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                             onPressed: () {
                               Color new_color = HttpHelper.default_note_color!;
                               //show a pop up to select color
-                              showDialog(
+                              Alert(
+                                style: Styles.alert_norm(),
                                 context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Select color'),
-                                    content: SingleChildScrollView(
-                                        child: ColorPicker(
-                                          pickerColor: HttpHelper.default_note_color!,
-                                          onColorChanged: (Color color) {
-                                            new_color = color;
-                                          },
-                                        )
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          HttpHelper.editDefaultNoteColor(new_color.value).then((result) {
-                                            if (!result) {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
-                                                  backgroundColor: Colors.redAccent,
-                                                  duration: const Duration(seconds: 3),
-                                                ),
-                                              );
-                                            } else {
-                                              HttpHelper.default_note_color = new_color;
-                                            }
-                                          });
-                                        },
-                                        child: const Text('OK'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          if (HttpHelper.default_note_color != HttpHelper.server_default_note_color)
-                                          {
-                                            HttpHelper.editDefaultNoteColor(HttpHelper.server_default_note_color!.value).then((result) {
-                                              if (!result) {
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(
-                                                    content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
-                                                    backgroundColor: Colors.redAccent,
-                                                    duration: const Duration(seconds: 3),
-                                                  ),
-                                                );
-                                              } else {
-                                                HttpHelper.default_note_color = HttpHelper.server_default_note_color!;
-                                              }
-                                            });
+                                title: 'Select color',
+                                content: SingleChildScrollView(
+                                    child: ColorPicker(
+                                      pickerColor: HttpHelper.default_note_color!,
+                                      onColorChanged: (Color color) {
+                                        new_color = color;
+                                      },
+                                    )
+                                ),
+                                buttons: [
+                                  DialogButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      HttpHelper.editDefaultNoteColor(new_color.value).then((result) {
+                                        if (!result) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
+                                              backgroundColor: Colors.redAccent,
+                                              duration: const Duration(seconds: 3),
+                                            ),
+                                          );
+                                        } else {
+                                          HttpHelper.default_note_color = new_color;
+                                        }
+                                      });
+                                    },
+                                    child: Text('OK', style: Styles.alert_button()),
+                                  ),
+                                  DialogButton(
+                                    onPressed: () { Navigator.pop(context); },
+                                    child: Text('Cancel', style: Styles.alert_button()),
+                                  ),
+                                  DialogButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      if (HttpHelper.default_note_color != HttpHelper.server_default_note_color)
+                                      {
+                                        HttpHelper.editDefaultNoteColor(HttpHelper.server_default_note_color!.value).then((result) {
+                                          if (!result) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
+                                                backgroundColor: Colors.redAccent,
+                                                duration: const Duration(seconds: 3),
+                                              ),
+                                            );
+                                          } else {
+                                            HttpHelper.default_note_color = HttpHelper.server_default_note_color!;
                                           }
-                                        },
-                                        child: const Text('Reset'),
-                                      )
-                                    ],
-                                  );
-                                },
-                              );
+                                        });
+                                      }
+                                    },
+                                    child: Text('Reset', style: Styles.alert_button()),
+                                  )
+                                ],
+                              ).show();
                             },
                           ),
                         ],
@@ -284,25 +279,13 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                                 custom_api_url = '';
                               }
                               HttpHelper.set_custom_api_cfg(HttpHelper.custom_api_temp, HttpHelper.custom_api_url_temp).then((result) {
-                                showDialog(
+                                Alert(
+                                  style: Styles.alert_closable(),
                                   context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Custom API'),
-                                      content: SingleChildScrollView(
-                                        child: Text('Please restart the app for changes to take effect.'),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('OK'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
+                                  title: 'Custom API',
+                                  desc: 'Please restart the app for changes to take effect.',
+                                  buttons: [],
+                                ).show();
                                 setState(() {});
                               });
                             },
@@ -352,6 +335,7 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                           Size ppm = Utils.physical_size(use_media: true, context: context); //physical pixels media
                           Size lpm = Utils.logical_size(use_media: true, context: context); //logical pixels media
                           Alert(
+                            style: Styles.alert_closable(),
                             context: context,
                             title: 'Diagnostic Data',
                             desc: 'api version: ${HttpHelper.CURRENT_VER}\n'
@@ -361,17 +345,7 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                                   'ppm size: ${ppm.width.round()}x${ppm.height.round()}\n'
                                   'lpm size: ${lpm.width.round()}x${lpm.height.round()}\n\n'
                                   'scale: ${HttpHelper.scale.toStringAsPrecision(2)}\n',
-                            buttons: [
-                              DialogButton(
-                                child: Text('OK', style: GoogleFonts.poppins(fontSize: 12)),
-                                onPressed: () => Navigator.pop(context),
-                              ),
-                            ],
-                            style: AlertStyle(
-                              isCloseButton: false,
-                              isOverlayTapDismiss: false,
-                              descStyle: GoogleFonts.poppins(fontSize: 12),
-                            ),
+                            buttons: [],
                           ).show();
                         },
                         child: Text('info', style: GoogleFonts.poppins(fontSize: 12)),
@@ -380,10 +354,12 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                       TextButton(
                         onPressed: () async {
                           Alert(
+                            style: Styles.alert_closable(),
                             context: context,
                             title: 'Experiments',
                             desc: 'These experiments might break something.\n'
                                   'Do not use them unless you know what you are doing.',
+                            buttons: [],
                             content: Column(
                               children: [
                                 TextButton(
@@ -431,17 +407,6 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                                   child: Text('repair config', style: GoogleFonts.poppins(fontSize: 12)),
                                 )
                               ],
-                            ),
-                            buttons: [
-                              DialogButton(
-                                child: Text('OK', style: GoogleFonts.poppins(fontSize: 12)),
-                                onPressed: () => Navigator.pop(context),
-                              ),
-                            ],
-                            style: AlertStyle(
-                              isCloseButton: false,
-                              isOverlayTapDismiss: false,
-                              descStyle: GoogleFonts.poppins(fontSize: 12),
                             ),
                           ).show();
                         },

@@ -151,22 +151,14 @@ class _NotesPageState extends State<NotesPage> {
     if (failed)
     {
       Alert(
+        style: Styles.alert_norm(),
         context: context,
         title: 'Error',
         desc: 'Saving the new order failed. Do not worry, your notes are not lost. The app will try to repair any issues on its own. If you notice any irregularities, please contact the developer via feedback.',
         buttons: [
           DialogButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            width: 120,
-            child: const Text(
-              'OK',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-              ),
-            ),
+            onPressed: () { Navigator.pop(context); },
+            child: Text('OK', style: Styles.alert_button()),
           )
         ],
       ).show();
@@ -192,6 +184,7 @@ class _NotesPageState extends State<NotesPage> {
 
             //show alert
             Alert(
+              style: Styles.alert_norm(),
               context: context,
               title: "Server Mismatch",
               desc: "Your notes are different from the server. Do you want to sync?",
@@ -203,20 +196,14 @@ class _NotesPageState extends State<NotesPage> {
                     last_bg_done = true; //this bool prevents stacking multiple alerts on top of each other
                     setState(() {});
                   },
-                  child: Text(
-                    "Sync",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
+                  child: Text("Sync", style: Styles.alert_button()),
                 ),
                 DialogButton(
                   onPressed: () async {
                     last_bg_done = true; //this bool prevents stacking multiple alerts on top of each other
                     Navigator.pop(context);
                   },
-                  child: Text(
-                    "Cancel",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
+                  child: Text("Cancel", style: Styles.alert_button()),
                 )
               ],
             ).show();
@@ -250,6 +237,7 @@ class _NotesPageState extends State<NotesPage> {
         for (var i = 0; i < popups.length; ++i) { desc += popups[i]['title'] + "\n\n"; }
 
         Alert(
+          style: Styles.alert_norm(),
           context: context,
           title: title,
           desc: desc,
@@ -278,11 +266,7 @@ class _NotesPageState extends State<NotesPage> {
                       duration: const Duration(seconds: 3)));
                 }
               },
-              width: 120,
-              child: Text(
-                "OK",
-                style: GoogleFonts.poppins(color: Colors.white, fontSize: 20),
-              ),
+              child: Text("OK", style: Styles.alert_button()),
             )
           ],
         ).show();
@@ -354,7 +338,13 @@ class _NotesPageState extends State<NotesPage> {
                           onPressed: () {
                             HttpHelper.getMessages().then((value) {
                               if (value == false) {
-                                Alert(context: context, title: "ERROR", desc: "Failed to get messages, check internet connection.").show();
+                                Alert(
+                                  style: Styles.alert_closable(),
+                                  context: context,
+                                  title: "ERROR",
+                                  desc: "Failed to get messages, check internet connection.",
+                                  buttons: [],
+                                ).show();
                               } else {
                                 Navigator.push(
                                     context,
@@ -405,7 +395,13 @@ class _NotesPageState extends State<NotesPage> {
                         onPressed: () {
                           HttpHelper.getNotes().then((value) {
                             if (value.first == false) {
-                              Alert(context: context, title: "ERROR", desc: "Failed to get data, check internet connection.").show();
+                              Alert(
+                                style: Styles.alert_closable(),
+                                context: context,
+                                title: "ERROR",
+                                desc: "Failed to get data, check internet connection.",
+                                buttons: [],
+                              ).show();
                             } else {
                               //prepare text if notes same
                               String same = ((value.elementAt(1) == true) ? 'no changes' : 'changes applied');
@@ -431,6 +427,7 @@ class _NotesPageState extends State<NotesPage> {
                         onPressed: () {
                           String owner_key_temp = '';
                           Alert(
+                            style: Styles.alert_norm(),
                             context: context,
                             title: 'Your Owner Key',
                             content: Column(
@@ -468,10 +465,7 @@ class _NotesPageState extends State<NotesPage> {
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: const Text(
-                                  'Close',
-                                  style: TextStyle(color: Colors.white, fontSize: 20),
-                                ),
+                                child: Text('Close', style: Styles.alert_button()),
                               ),
                               DialogButton(
                                 onPressed: () {
@@ -484,77 +478,37 @@ class _NotesPageState extends State<NotesPage> {
                                         if (value) {
                                           HttpHelper.getNotes().then((value) {
                                             Alert(
+                                              style: Styles.alert_closable(),
                                               context: context,
                                               title: 'Success',
                                               desc: 'Your notes have been imported, please reload the page.',
-                                              buttons: [
-                                                DialogButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(context),
-                                                  width: 120,
-                                                  child: const Text(
-                                                    'OK',
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 20),
-                                                  ),
-                                                )
-                                              ],
+                                              buttons: [],
                                             ).show();
                                           });
                                         }
                                         else {
                                           Alert(
+                                            style: Styles.alert_closable(),
                                             context: context,
                                             title: 'Error',
                                             desc: 'Failed saving the new key.',
-                                            buttons: [
-                                              DialogButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                width: 120,
-                                                child: const Text(
-                                                  'OK',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 20,
-                                                  ),
-                                                ),
-                                              )
-                                            ],
+                                            buttons: [],
                                           ).show();
                                         }
                                       });
                                     }
                                     else {
                                       Alert(
+                                        style: Styles.alert_closable(),
                                         context: context,
                                         title: 'Error',
                                         desc: 'This owner key does not exist',
-                                        buttons: [
-                                          DialogButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            width: 120,
-                                            child: const Text(
-                                              'OK',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                          )
-                                        ],
+                                        buttons: [],
                                       ).show();
                                     }
                                   });
                                 },
-                                child: const Text(
-                                  'Change',
-                                  style: TextStyle(color: Colors.white, fontSize: 20),
-                                ),
+                                child: Text('Change', style: Styles.alert_button()),
                               ),
                             ],
                           ).show();
@@ -652,7 +606,13 @@ class _NotesPageState extends State<NotesPage> {
                     {
                       HttpHelper.getNotes().then((value) {
                         if (value.first == false) {
-                          Alert(context: context, title: "ERROR", desc: "Failed to get data, check internet connection.").show();
+                          Alert(
+                            style: Styles.alert_closable(),
+                            context: context,
+                            title: "ERROR",
+                            desc: "Failed to get data, check internet connection."
+                            buttons: [],
+                          ).show();
                         } else {
                           //prepare text if notes same
                           String same = ((value.elementAt(1) == true) ? 'no changes' : 'changes applied');
@@ -700,6 +660,7 @@ class _NotesPageState extends State<NotesPage> {
                               String password_temp = '';
                               //prompt user to enter the password
                               Alert(
+                                style: Styles.alert_norm(),
                                 context: context,
                                 title: 'Enter password',
                                 content: Column(
@@ -721,10 +682,7 @@ class _NotesPageState extends State<NotesPage> {
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: const Text(
-                                      'Close',
-                                      style: TextStyle(color: Colors.white, fontSize: 20),
-                                    ),
+                                    child: Text('Close', style: Styles.alert_button()),
                                   ),
                                   DialogButton(
                                     onPressed: () {
@@ -756,53 +714,39 @@ class _NotesPageState extends State<NotesPage> {
                                       {
                                         //if not show error
                                         Alert(
+                                          style: Styles.alert_closable(),
                                           context: context,
                                           title: 'Error',
                                           desc: 'Wrong password.',
-                                          buttons: [
-                                            DialogButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              width: 120,
-                                              child: const Text(
-                                                'OK',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20,
-                                                ),
-                                              ),
-                                            )
-                                          ],
+                                          buttons: [],
                                         ).show();
                                       }
                                     },
-                                    child: const Text(
-                                      'Check',
-                                      style: TextStyle(color: Colors.white, fontSize: 20),
-                                    ),
+                                    child: Text('Check', style: Styles.alert_button()),
                                   ),
                                 ],
                               ).show();
-                              return;
                             }
-                            Navigator.push(
-                                context,
-                                PageTransition(
-                                    alignment: Alignment.bottomCenter,
-                                    curve: Curves.easeInOut,
-                                    duration: Duration(milliseconds: 600),
-                                    reverseDuration: Duration(milliseconds: 600),
-                                    type: PageTransitionType.size,
-                                    child: EditorPage(
-                                        noteKey: HttpHelper.display_notes[i]["key"],
-                                        content: HttpHelper.display_notes[i]["content"],
-                                        title: HttpHelper.display_notes[i]["title"],
-                                        index: i,
-                                        blur: HttpHelper.display_notes[i]["blur"],
-                                        password: '',
-                                        color: HttpHelper.display_notes[i]["color"] ?? HttpHelper.default_note_color!.value),
-                                    childCurrent: this.widget));
+                            else
+                            {
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                      alignment: Alignment.bottomCenter,
+                                      curve: Curves.easeInOut,
+                                      duration: Duration(milliseconds: 600),
+                                      reverseDuration: Duration(milliseconds: 600),
+                                      type: PageTransitionType.size,
+                                      child: EditorPage(
+                                          noteKey: HttpHelper.display_notes[i]["key"],
+                                          content: HttpHelper.display_notes[i]["content"],
+                                          title: HttpHelper.display_notes[i]["title"],
+                                          index: i,
+                                          blur: HttpHelper.display_notes[i]["blur"],
+                                          password: '',
+                                          color: HttpHelper.display_notes[i]["color"] ?? HttpHelper.default_note_color!.value),
+                                      childCurrent: this.widget));
+                            }
                           },
                           onLongPress: () {
                             if (HttpHelper.old_ordering)

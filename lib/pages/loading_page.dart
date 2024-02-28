@@ -1,9 +1,11 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_this
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kardi_notes/pages/notes_page.dart';
 import 'package:kardi_notes/pages/settings_page.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../models/data_sync.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -12,6 +14,7 @@ import 'dart:io' show Platform;
 import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:thread/thread.dart';
+import '../models/utils.dart';
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({Key? key}) : super(key: key);
@@ -25,43 +28,34 @@ class _LoadingPageState extends State<LoadingPage> {
   bool stop_loading_animation = false;
   bool can_continue = false;
 
-  void background() async
+  void prepare() async
   {
+    await HttpHelper.update_scale();
+
     //do we have internet connection?
     can_continue = false;
-    Connectivity().checkConnectivity().then((value)
+    Connectivity().checkConnectivity().then((value) async
     {
       if (value == ConnectivityResult.none)
       {
         stop_loading_animation = true;
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('No internet connection',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
-                          },
-                          child: Text('Retry'),
-                        ),
-                      ]
-                  )
-              );
-            }
-        ).then((value) {
-          print("connection check dialog closed");
-          can_continue = true;
-        });
+        await Alert(
+          style: Styles.alert_norm(),
+          context: context,
+          title: 'ERROR',
+          desc: 'No internet connection',
+          buttons: [
+            DialogButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+              },
+              child: Text('Retry', style: Styles.alert_button()),
+            ),
+          ],
+        ).show();
+        print("connection check dialog closed");
+        can_continue = true;
       }
       else { can_continue = true; }
     });
@@ -71,45 +65,34 @@ class _LoadingPageState extends State<LoadingPage> {
 
     //ensure config
     can_continue = false;
-    HttpHelper.ensure_config().then((value)
+    HttpHelper.ensure_config().then((value) async
     {
       if (value[0] != 0)
       {
         stop_loading_animation = true;
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Error ensuring config (${value[0]}\n${value[1]})',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
-                          },
-                          child: Text('Retry'),
-                        ),
-                        if (value[2] != "") ElevatedButton(
-                          onPressed: () {
-                            Clipboard.setData(ClipboardData(text: value[2]));
-                          },
-                          child: Text('Copy to clipboard'),
-                        ),
-                      ]
-                  )
-              );
-            }
-        ).then((value) {
-          print("ensuring config dialog closed");
-          can_continue = true;
-        });
+        await Alert(
+          style: Styles.alert_norm(),
+          context: context,
+          title: 'ERROR',
+          desc: 'Error ensuring config (${value[0]}\n${value[1]})',
+          buttons: [
+            DialogButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+              },
+              child: Text('Retry', style: Styles.alert_button()),
+            ),
+            if (value[2] != "") DialogButton(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: value[2]));
+              },
+              child: Text('Copy to clipboard', style: Styles.alert_button()),
+            ),
+          ],
+        ).show();
+        print("ensuring config dialog closed");
+        can_continue = true;
       }
       else { can_continue = true; }
     });
@@ -119,39 +102,28 @@ class _LoadingPageState extends State<LoadingPage> {
 
     //transfer config
     can_continue = false;
-    HttpHelper.transfer_old_cfg_to_new().then((value)
+    HttpHelper.transfer_old_cfg_to_new().then((value) async
     {
       if (value == false)
       {
         stop_loading_animation = true;
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Error transferring config',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
-                          },
-                          child: Text('Retry'),
-                        ),
-                      ]
-                  )
-              );
-            }
-        ).then((value) {
-          print("transferring config dialog closed");
-          can_continue = true;
-        });
+        await Alert(
+          style: Styles.alert_norm(),
+          context: context,
+          title: 'ERROR',
+          desc: 'Error transferring config',
+          buttons: [
+            DialogButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+              },
+              child: Text('Retry', style: Styles.alert_button()),
+            ),
+          ],
+        ).show();
+        print("transferring config dialog closed");
+        can_continue = true;
       }
       else { can_continue = true; }
     });
@@ -161,46 +133,35 @@ class _LoadingPageState extends State<LoadingPage> {
 
     //get custom api cfg
     can_continue = false;
-    HttpHelper.get_custom_api_cfg().then((value)
+    HttpHelper.get_custom_api_cfg().then((value) async
     {
       if (value == false)
       {
         stop_loading_animation = true;
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Error loading custom api config.',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
-                          },
-                          child: Text('Retry'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            stop_loading_animation = false;
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Ignore and continue'),
-                        ),
-                      ]
-                  )
-              );
-            }
-        ).then((value) {
-          print("getting custom api cfg dialog closed");
-          can_continue = true;
-        });
+        await Alert(
+          style: Styles.alert_norm(),
+          context: context,
+          title: 'ERROR',
+          desc: 'Error loading custom api config',
+          buttons: [
+            DialogButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+              },
+              child: Text('Retry', style: Styles.alert_button()),
+            ),
+            DialogButton(
+              onPressed: () {
+                stop_loading_animation = false;
+                Navigator.of(context).pop();
+              },
+              child: Text('Continue with default api config', style: Styles.alert_button()),
+            ),
+          ],
+        ).show();
+        print("getting custom api cfg dialog closed");
+        can_continue = true;
       }
       else { can_continue = true; }
     });
@@ -217,69 +178,41 @@ class _LoadingPageState extends State<LoadingPage> {
 
     //we have internet, check version
     can_continue = false;
-    HttpHelper.versionCheck(HttpHelper.CURRENT_VER, HttpHelper.DEV_MODE, Platform.operatingSystem).then((value)
+    HttpHelper.versionCheck(HttpHelper.CURRENT_VER, HttpHelper.DEV_MODE, Platform.operatingSystem).then((value) async
     {
       if (value == "unsupported")
       {
         stop_loading_animation = true;
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('This platform is not supported',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ElevatedButton(
-                          //close the pop up and leave user on this page
-                          onPressed: () { Navigator.of(context).pop(); },
-                          child: Text('Close'),
-                        ),
-                      ]
-                  )
-              );
-            }
-        ).then((value) {
-          print("version check dialog closed");
-          can_continue = true;
-        });
+        await Alert(
+          style: Styles.alert_closable(),
+          context: context,
+          title: 'ERROR',
+          desc: 'This platform is not supported',
+          buttons: [],
+        ).show();
+        print("version check dialog closed");
+        can_continue = true;
       }
       else if (value == "notok")
       {
         stop_loading_animation = true;
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Error checking version',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
-                          },
-                          child: Text('Retry'),
-                        ),
-                      ]
-                  )
-              );
-            }
-        ).then((value) {
-          print("version check dialog closed");
-          can_continue = true;
-        });
+        await Alert(
+          style: Styles.alert_norm(),
+          context: context,
+          title: 'ERROR',
+          desc: 'Error checking version',
+          buttons: [
+            DialogButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+              },
+              child: Text('Retry', style: Styles.alert_button()),
+            ),
+          ],
+        ).show();
+        print("version check dialog closed");
+        can_continue = true;
       }
       else if (value != "ok")
       {
@@ -300,103 +233,74 @@ class _LoadingPageState extends State<LoadingPage> {
           bool minorHigher = int.parse(currentVer[1]) >= int.parse(latestVer[1]);
           bool buildHigher = int.parse(currentVer[2]) >= int.parse(latestVer[2]);
 
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                    content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text((majorHigher && minorHigher && buildHigher) ? 'You are using higher version than latest' : 'New version available',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          instructions.isNotEmpty ? Text(
-                            instructions,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontStyle: FontStyle.italic,
-                              color: Colors.grey,
-                            ),
-                          ) : SizedBox.shrink(),
-                          instructions_link.isNotEmpty ? RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Instructions can be found at ',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                TextSpan(
-                                    text: instructions_link,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontStyle: FontStyle.italic,
-                                      color: Colors.blue,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                    recognizer: TapGestureRecognizer()..onTap = () { launchUrlString(instructions_link, mode: LaunchMode.externalApplication); }
-                                ),
-                              ],
-                            ),
-                          ) : SizedBox.shrink(),
-                          latest_link.isNotEmpty ? ElevatedButton(
-                            onPressed: () { launchUrlString(latest_link, mode: LaunchMode.externalApplication); },
-                            child: Text((majorHigher && minorHigher && buildHigher) ? 'Downgrade' : 'Update'),
-                          ) : SizedBox.shrink(),
-                          can_ignore ? Padding(
-                              padding: EdgeInsets.only(top: 10),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  stop_loading_animation = false;
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('Ignore and continue'),
-                              )) : SizedBox.shrink()
-                        ]
-                    )
-                );
-              }
-          ).then((value) {
-            print("version check dialog closed");
-            can_continue = true;
-          });
+          await Alert(
+            style: Styles.alert_norm(),
+            context: context,
+            title: 'ERROR',
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  (majorHigher && minorHigher && buildHigher) ? 'You are using higher version than latest' : 'New version available',
+                  style: GoogleFonts.poppins(fontSize: HttpHelper.text_height),
+                ),
+                if (instructions.isNotEmpty) Text(
+                  instructions,
+                  style: GoogleFonts.poppins(fontSize: HttpHelper.text_height),
+                ),
+                if (instructions_link.isNotEmpty) RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Instructions can be found at ',
+                        style: GoogleFonts.poppins(fontSize: HttpHelper.text_height),
+                      ),
+                      TextSpan(
+                        text: instructions_link,
+                        style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Colors.blue, decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()..onTap = () { launchUrlString(instructions_link, mode: LaunchMode.externalApplication); }
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            buttons: [
+              if (latest_link.isNotEmpty) DialogButton(
+                onPressed: () { launchUrlString(latest_link, mode: LaunchMode.externalApplication); },
+                child: Text((majorHigher && minorHigher && buildHigher) ? 'Downgrade' : 'Update', style: Styles.alert_button()),
+              ),
+              if (can_ignore) DialogButton(
+                onPressed: () {
+                  stop_loading_animation = false;
+                  Navigator.of(context).pop();
+                },
+                child: Text('Ignore', style: Styles.alert_button()),
+              ),
+            ],
+          ).show();
+          print("version check dialog closed");
+          can_continue = true;
         }
         catch (e)
         {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                    content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('Version check returned from server seems to be corrupted',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
-                            },
-                            child: Text('Retry'),
-                          ),
-                        ]
-                    )
-                );
-              }
-          ).then((value) {
-            print("version check dialog closed");
-            can_continue = true;
-          });
+          await Alert(
+            style: Styles.alert_norm(),
+            context: context,
+            title: 'ERROR',
+            desc: 'Version check returned from server seems to be corrupted',
+            buttons: [
+              DialogButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+                },
+                child: Text('Retry', style: Styles.alert_button()),
+              ),
+            ],
+          ).show();
+          print("version check dialog closed");
+          can_continue = true;
         }
       }
       else { can_continue = true; }
@@ -407,38 +311,27 @@ class _LoadingPageState extends State<LoadingPage> {
 
     //version is ok, continue to load notes
     can_continue = false;
-    HttpHelper.getNotes().then((value) {
+    HttpHelper.getNotes().then((value) async {
       if (value.first == false)
       {
         stop_loading_animation = true;
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Error loading data',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
-                          },
-                          child: Text('Retry'),
-                        ),
-                      ]
-                  )
-              );
-            }
-        ).then((value) {
-          print("getting notes dialog closed");
-          can_continue = true;
-        });
+        await Alert(
+          style: Styles.alert_norm(),
+          context: context,
+          title: 'ERROR',
+          desc: 'Error loading data',
+          buttons: [
+            DialogButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+              },
+              child: Text('Retry', style: Styles.alert_button()),
+            ),
+          ],
+        ).show();
+        print("getting notes dialog closed");
+        can_continue = true;
       }
       else { can_continue = true; }
     });
@@ -446,7 +339,6 @@ class _LoadingPageState extends State<LoadingPage> {
     print("getting notes done");
     if (stop_loading_animation) { setState(() {}); return; }
 
-    await HttpHelper.update_scale();
     HttpHelper.connected = true;
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => NotesPage()));
   }
@@ -456,8 +348,9 @@ class _LoadingPageState extends State<LoadingPage> {
   {
     super.initState();
 
-    //final thread = Thread((events) { background(); }); //does not work with async stuff? i guess?
-    background(); //should not be a problem?
+    //final thread = Thread((events) { prepare(); }); //does not work with async stuff? i guess?
+    //Future.delayed(Duration.zero,() { prepare(); });
+    prepare(); //should not be a problem?
   }
 
   @override
