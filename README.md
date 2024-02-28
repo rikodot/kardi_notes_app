@@ -5,12 +5,10 @@ No ads, no telemetry, no logs.
 
 Application is easy to use, mostly self explanatory with hints and example in case you get lost. Please note, if you forget your password or lose your device, all your data is lost and cannot be recovered. App contains multiple safe mechanisms to prevent undesired behaviour such as overwriting notes that have been changed from other device.</p>
 
-<p>
-  More information can be found at https://www.kardi.tech/#notes<br>
+More information can be found at https://www.kardi.tech/#notes<br>
 Detailed update log can be found at https://www.kardi.tech/notes/<br>
 Privacy policy can be found at https://www.kardi.tech/privacy-policy/<br>
-Source code for the server logic is in [this repository](https://github.com/rikodot/kardi_notes_api)
-</p>
+Source code for the server logic is in [this repository](https://github.com/rikodot/kardi_notes_api)<br>
 
 ## Building
 You might need to [setup signing](https://docs.flutter.dev/deployment/android), as `key.properties` and `upload-keystore.jks` files are omitted from the source control.
