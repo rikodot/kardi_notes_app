@@ -405,7 +405,21 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                                     }
                                   },
                                   child: Text('repair config', style: GoogleFonts.poppins(fontSize: 12)),
-                                )
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    final res = await HttpHelper.count_letters();
+                                    Navigator.pop(context);
+                                    await Alert(
+                                      style: Styles.alert_closable(),
+                                      context: context,
+                                      title: 'Letter count',
+                                      desc: 'Total approximation: ${Styles.num_f.format(res)}\n',
+                                      buttons: [],
+                                    ).show();
+                                  },
+                                  child: Text('count letters', style: GoogleFonts.poppins(fontSize: 12)),
+                                ),
                               ],
                             ),
                           ).show();

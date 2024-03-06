@@ -1542,4 +1542,29 @@ class HttpHelper
     catch (e) { return false; }
     return false;
   }
+
+  static Future<int> count_letters() async
+  {
+    int count = 0;
+    for (var note in notes)
+    {
+      if (note['password'].toString().isEmpty) { count += note['content'].toString().length; }
+      else
+      {
+        //base64 is used
+        //output_size = 4*ceil(input_size/3)
+        //we do only approximation so we can omit the padding and ceil
+        //input_size = 3*(output_size/4)
+        int enc_len = 3 * (note['content'].toString().length / 4).round();
+
+        //PKCS7 is used by default
+        //output_size = input_size + (block_size - (input_size % block_size))
+        //block_size is 16 bytes for AES
+        //we do only approximation so we can omit (input_size % block_size)
+        //input_size = output_size - block_size
+        count += enc_len - 16;
+      }
+    }
+    return count;
+  }
 }

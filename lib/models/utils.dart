@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'data_sync.dart';
 
@@ -46,6 +47,8 @@ class Utils {
 
 class Styles
 {
+  static var num_f = NumberFormat("#,###", "en_US");
+
   static AlertStyle alert_norm()
   {
     return AlertStyle(

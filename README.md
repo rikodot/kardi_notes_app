@@ -22,7 +22,7 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 
 
 ## TODO
-- [ ] new note with title and no content -> save & go back -> refresh notes -> false positive changes found
+- [ ] (happens only sometimes) new note with title and no content -> save & go back -> refresh notes -> false positive changes found
 - [ ] closable alert cant be closed by clicking horizontally next to it (diagonally or vertically works)
 - [ ] site css & js fix - a lot of useless properties, messy code, slideshow can only be once on site, problem if height too low etc etc
 - [ ] dragdown to refresh and dragup to navigate -> false positive when moving note with new system
@@ -82,6 +82,7 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [x] show creation date in both msgs and notes
 - [x] data_sync json assigning fix lol
 - [x] save all settings in cloud
+- [x] letter count
 - [x] messages tab (so i can send msgs to individuals or all but not as announcements)
 - [x] feedback button
 - [x] move notes (add index field to db should be enough?)
