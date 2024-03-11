@@ -1,0 +1,1 @@
+Cross-platform app to take notes. Encrypted, open-source, sync across devices.

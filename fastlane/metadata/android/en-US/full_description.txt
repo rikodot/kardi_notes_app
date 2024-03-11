@@ -1,0 +1,13 @@
+<p>Application for taking notes with capabilities to view all content from any device while keeping all data accessible by you only. The app is designed to run on all modern operating systems including Windows, Linux, Android, MacOS and iOS along with a web version accessible directly from any browser. Download on your phone, save important information, download on your computer, easily pair the applications and enjoy your content from anywhere!</p>
+
+<p>No ads, no telemetry, no logs.</p>
+
+<p>Application is easy to use, mostly self explanatory with hints and example in case you get lost. Please note, if you forget your password or lose your device, all your data is lost and cannot be recovered. App contains multiple safe mechanisms to prevent undesired behaviour such as overwriting notes that have been changed from other device.</p>
+
+<p>
+More information can be found at <a href="https://www.kardi.tech/#notes">https://www.kardi.tech/#notes</a><br>
+Detailed update log can be found at <a href="https://www.kardi.tech/notes/">https://www.kardi.tech/notes/</a><br>
+Privacy policy can be found at <a href="https://www.kardi.tech/privacy-policy/">https://www.kardi.tech/privacy-policy/</a><br>
+Source code for the app can be found at <a href="https://github.com/rikodot/kardi_notes_app/">https://github.com/rikodot/kardi_notes_app/</a><br>
+Source code for the api can be found at <a href="https://github.com/rikodot/kardi_notes_api/">https://github.com/rikodot/kardi_notes_api/</a><br>
+</p>
