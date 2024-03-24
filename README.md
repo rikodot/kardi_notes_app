@@ -22,13 +22,15 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 
 
 ## TODO
+- [ ] when moving note with new system and is holding at top/bottom - scroll up/down automatically - cursor must be moving otherwise it stops
+- [ ] optional log file of actions with ability to upload to server
+- [ ] (happens only sometimes) new note -> save & go back -> move new note -> refresh notes -> the note that should have been first is moved (maybe to its original position based on creation date - not sure at all)
 - [ ] (happens only sometimes) new note with title and no content -> save & go back -> refresh notes -> false positive changes found
 - [ ] closable alert cant be closed by clicking horizontally next to it (diagonally or vertically works)
 - [ ] site css & js fix - a lot of useless properties, messy code, slideshow can only be once on site, problem if height too low etc etc
 - [ ] dragdown to refresh and dragup to navigate -> false positive when moving note with new system
 - [ ] dragdown to refresh and dragup to navigate -> probably false positive when scrolling up and down on phone (not tested)
 - [ ] dragdown to refresh and dragup to navigate -> if no notes, make sure the text widget takes the whole screen so dragging works
-- [ ] when moving note with new system and is holding at top/bottom - scroll up/down automatically
 - [ ] unify capital letters, alert buttons, code style, fonts etc
 - [ ] change package name when debugging so it does not replace original like add _dev and for google play remove it?
 - [ ] bug: on smaller logical ppi settings custom api and scale put on separate lines or smth

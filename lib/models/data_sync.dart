@@ -23,7 +23,7 @@ class HttpHelper
 {
   //api settings
   static const String url = "https://www.kardi.tech/notes/handle.php";
-  static String CURRENT_VER = "2.0.5";
+  static String CURRENT_VER = "2.0.6";
   static bool DEV_MODE = false;
 
   //owner key

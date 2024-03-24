@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_this
+import 'dart:math';
+
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +9,7 @@ import 'package:kardi_notes/pages/messages_page.dart';
 import 'package:kardi_notes/pages/settings_page.dart';
 import 'note_mini.dart';
 import 'package:page_transition/page_transition.dart';
+import 'dart:isolate';
 import '../models/data_sync.dart';
 import '../models/utils.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -30,6 +33,10 @@ class _NotesPageState extends State<NotesPage> {
   double vertical_drag_start = 0;
   /*Size last_size = Utils.logical_size();
   int last_size_change = Utils.now();*/
+  ScrollController _scrollController = ScrollController();
+  double point_down_y = 0;
+  int last_jump = 0;
+  int jump_delay_ms = 50;
 
   Future<bool> move_note(int old_index, int new_index) async
   {
@@ -223,6 +230,12 @@ class _NotesPageState extends State<NotesPage> {
     cron.schedule(Schedule.parse('*/5 * * * *'), () async {
       background();
     });
+
+    /*Isolate.spawn((int i) async {
+      while (true) {
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+    }, 0);*/
 
     //register callback to show pop up msgs and mark flip their pop up boolean
     WidgetsBinding.instance.addPostFrameCallback((_)
@@ -595,6 +608,8 @@ class _NotesPageState extends State<NotesPage> {
               body: SafeArea(
                 minimum: EdgeInsets.all(4.0),
                 child: Listener(
+                  onPointerDown: (details) { if (!HttpHelper.old_ordering) { point_down_y = details.position.dy; } },
+                  onPointerMove: (details) { if (!HttpHelper.old_ordering) { point_down_y = details.position.dy; } },
                   /*onPointerDown: (details) { if (!moving_note_old) { vertical_drag_start = details.position.dy; } },
                   onPointerUp: (details)
                   {
@@ -776,6 +791,7 @@ class _NotesPageState extends State<NotesPage> {
                       mainAxisSpacing: 10,
                       crossAxisCount: Scaling.notes_page_cross_axis_count(use_media: true, context: context),
                     ),
+                    controller: _scrollController,
                     children: HttpHelper.get_new_ordering_notes(context, this.widget),
                     isOnlyLongPress: true, //this means cursor must stay in the same place
                     //dragCompletion does not work in version 0.0.9 so we stay at 0.0.8 until it is fixed
@@ -783,6 +799,24 @@ class _NotesPageState extends State<NotesPage> {
                       await move_note(beforeIndex, afterIndex);
                     },
                     dragFeedback: (List<DraggableGridItem> list, int index) {
+                      double screen_height_l = Utils.logical_size(use_media: true, context: context).height;
+                      /*print("offset: ${_scrollController.offset}");
+                      print("down_y: $point_down_y");
+                      print("hght_l: $screen_height_l");*/
+                      if (_scrollController.hasClients)
+                      {
+                        if (point_down_y < screen_height_l / 10 && DateTime.now().millisecondsSinceEpoch - last_jump > jump_delay_ms && _scrollController.offset > 0)
+                        {
+                          _scrollController.jumpTo(max(_scrollController.offset - screen_height_l / 20, 0));
+                          last_jump = DateTime.now().millisecondsSinceEpoch;
+                        }
+                        else if (point_down_y > screen_height_l - screen_height_l / 10 && DateTime.now().millisecondsSinceEpoch - last_jump > jump_delay_ms && _scrollController.offset < _scrollController.position.maxScrollExtent!)
+                        {
+                          _scrollController.jumpTo(min(_scrollController.offset + screen_height_l / 20, _scrollController.position.maxScrollExtent!));
+                          last_jump = DateTime.now().millisecondsSinceEpoch;
+                        }
+                      }
+
                       return Material(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
                         elevation: 2,
