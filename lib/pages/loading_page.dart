@@ -63,6 +63,9 @@ class _LoadingPageState extends State<LoadingPage> {
     print("connection check done");
     if (stop_loading_animation) { setState(() {}); return; }
 
+    //option to select server before any packets are sent
+    //await HttpHelper.default_server_option_first_launch(context);
+
     //ensure config
     can_continue = false;
     HttpHelper.ensure_config().then((value) async

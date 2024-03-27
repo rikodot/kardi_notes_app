@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:deepcopy/deepcopy.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_draggable_gridview/flutter_draggable_gridview.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:mutex/mutex.dart';
 import 'dart:convert';
@@ -11,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import '../pages/editor_page.dart';
 import '../pages/note_mini.dart';
 import 'utils.dart';
@@ -1541,6 +1544,95 @@ class HttpHelper
     }
     catch (e) { return false; }
     return false;
+  }
+
+  //must be called before any interactions with config (fdroid compliance)
+  static Future<void> default_server_option_first_launch(BuildContext context) async
+  {
+    try
+    {
+      //is this first launch (does config exist)
+      final directory = await getApplicationDocumentsDirectory();
+      final path = directory.path;
+      File file = File('$path/kardi.config.json');
+      if (!await file.exists())
+      {
+        //prompt user to select server (default or custom url)
+        final api_instructions = 'https://github.com/rikodot/kardi_notes_api';
+        String custom_api_url = '';
+        await Alert(
+          style: Styles.alert_norm(),
+          context: context,
+          title: 'Select server',
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Instructions to setup custom server can be found at ',
+                      style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Colors.black45),
+                    ),
+                    TextSpan(
+                        text: api_instructions,
+                        style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Colors.blue, decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()..onTap = () { launchUrlString(api_instructions, mode: LaunchMode.externalApplication); }
+                    ),
+                    TextSpan(
+                      text: '.',
+                      style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Colors.black45),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              DialogButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Use default server', style: Styles.alert_button()),
+              ),
+              Text('or', style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Colors.black45)),
+              SizedBox(height: 4),
+              Row(
+                children: [
+                  Expanded(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxHeight: 40),
+                      child: TextField(
+                        controller: TextEditingController(),
+                        onChanged: (value) { custom_api_url = value; },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Custom server URL',
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                      icon: Icon(Icons.save, color: Colors.black54),
+                      iconSize: 24,
+                      onPressed: () async {
+                        if (custom_api_url.isNotEmpty)
+                        {
+                          var ret = await HttpHelper.ensure_config();
+                          if (ret[0] == 0) { await HttpHelper.set_custom_api_cfg(true, custom_api_url); }
+                          Navigator.of(context).pop();
+                        }
+                      }
+                  ),
+                ],
+              ),
+            ],
+          ),
+          buttons: [],
+        ).show();
+      }
+
+      return;
+    }
+    catch (e) { return; }
   }
 
   static Future<int> count_letters() async

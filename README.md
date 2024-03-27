@@ -22,6 +22,9 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 
 
 ## TODO
+- [ ] add measures to stop (probably google's) bots from spamming the server
+- [ ] when setting custom url (in settings or loading screen), check if it is correct before saving
+- [ ] more verbose error messages in versionCheck (not always "notok")
 - [ ] when moving note with new system and is holding at top/bottom - scroll up/down automatically - cursor must be moving otherwise it stops
 - [ ] optional log file of actions with ability to upload to server
 - [ ] (happens only sometimes) new note -> save & go back -> move new note -> refresh notes -> the note that should have been first is moved (maybe to its original position based on creation date - not sure at all)
