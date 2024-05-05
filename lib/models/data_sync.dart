@@ -26,7 +26,7 @@ class HttpHelper
 {
   //api settings
   static const String url = "https://www.kardi.tech/notes/handle.php";
-  static String CURRENT_VER = "2.0.6";
+  static String CURRENT_VER = "2.0.7";
   static bool DEV_MODE = false;
 
   //owner key
@@ -55,6 +55,7 @@ class HttpHelper
 
   //note color
   static Color? server_default_note_color = null;
+  static Color? copy_note_color = null;
 
   //scale
   static const double scale_min = 0.2;

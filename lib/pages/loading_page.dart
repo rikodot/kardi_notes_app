@@ -74,7 +74,7 @@ class _LoadingPageState extends State<LoadingPage> {
       {
         stop_loading_animation = true;
         await Alert(
-          style: Styles.alert_norm(),
+          style: Styles.alert_closable(),
           context: context,
           title: 'ERROR',
           desc: 'Error ensuring config (${value[0]}\n${value[1]})',
@@ -111,7 +111,7 @@ class _LoadingPageState extends State<LoadingPage> {
       {
         stop_loading_animation = true;
         await Alert(
-          style: Styles.alert_norm(),
+          style: Styles.alert_closable(),
           context: context,
           title: 'ERROR',
           desc: 'Error transferring config',
@@ -142,7 +142,7 @@ class _LoadingPageState extends State<LoadingPage> {
       {
         stop_loading_animation = true;
         await Alert(
-          style: Styles.alert_norm(),
+          style: Styles.alert_closable(),
           context: context,
           title: 'ERROR',
           desc: 'Error loading custom api config',
@@ -200,7 +200,7 @@ class _LoadingPageState extends State<LoadingPage> {
       {
         stop_loading_animation = true;
         await Alert(
-          style: Styles.alert_norm(),
+          style: Styles.alert_closable(),
           context: context,
           title: 'ERROR',
           desc: 'Error checking version',

@@ -22,9 +22,13 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 
 
 ## TODO
+- [ ] captcha if config file does not exist (only once, to prevent bots spamming the api)
+- [ ] multiple versions of api so no need for version check
+- [ ] add android:allowBackup flag and set to false so people cant copy the data from the phone using adb
 - [ ] add measures to stop (probably google's) bots from spamming the server
 - [ ] when setting custom url (in settings or loading screen), check if it is correct before saving
 - [ ] more verbose error messages in versionCheck (not always "notok")
+- [ ] better internet connectivity check (maybe also check if can connect to api)
 - [ ] when moving note with new system and is holding at top/bottom - scroll up/down automatically - cursor must be moving otherwise it stops
 - [ ] optional log file of actions with ability to upload to server
 - [ ] (happens only sometimes) new note -> save & go back -> move new note -> refresh notes -> the note that should have been first is moved (maybe to its original position based on creation date - not sure at all)
@@ -87,7 +91,9 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [x] show creation date in both msgs and notes
 - [x] data_sync json assigning fix lol
 - [x] save all settings in cloud
+- [x] copy colors of notes
 - [x] letter count
+- [x] fix errors in loading screen not being closable
 - [x] messages tab (so i can send msgs to individuals or all but not as announcements)
 - [x] feedback button
 - [x] move notes (add index field to db should be enough?)

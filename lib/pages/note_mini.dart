@@ -42,7 +42,8 @@ class _NoteMiniState extends State<NoteMini> {
           Expanded(
             child: Container(
               alignment: Alignment.centerLeft,
-              color: widget.color != HttpHelper.default_note_color!.value ? Color(widget.color) : (widget.password ? Colors.red.shade400 : (widget.blur ? Colors.green.shade900 : HttpHelper.default_note_color)),
+              //color: widget.color != HttpHelper.default_note_color!.value ? Color(widget.color) : (widget.password ? Colors.red.shade400 : (widget.blur ? Colors.green.shade900 : HttpHelper.default_note_color)),
+              color: widget.color != HttpHelper.default_note_color!.value ? Color(widget.color) : HttpHelper.default_note_color,
               padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0),
               child: Text(widget.title,
                   overflow: TextOverflow.ellipsis,

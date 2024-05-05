@@ -339,7 +339,7 @@ class _NotesPageState extends State<NotesPage> {
                           padding: EdgeInsets.fromLTRB(2.5, 2, 2, 3.5),
                           child: Text(
                             HttpHelper.msgs_unread.toString(),
-                            style: GoogleFonts.lato(fontSize: 14, color: Colors.white),
+                            style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
                           ),
                         ),
                         //badgeAnimation: badges.BadgeAnimation.fade(toAnimate: false),

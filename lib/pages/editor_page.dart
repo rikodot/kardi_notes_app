@@ -256,8 +256,43 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                       ),
                       buttons: [
                         DialogButton(
+                          onPressed: HttpHelper.copy_note_color == null ? null : () async {
+                            if (widget.index != -1 && widget.color != HttpHelper.copy_note_color!.value)
+                            {
+                              bool res = await HttpHelper.editNoteColor(widget.noteKey, HttpHelper.copy_note_color!.value);
+                              if (!res)
+                              {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
+                                    backgroundColor: Colors.redAccent,
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                              }
+                              else
+                              {
+                                widget.color = HttpHelper.copy_note_color!.value;
+                                HttpHelper.display_notes[widget.index]["color"] = HttpHelper.copy_note_color!.value;
+                                HttpHelper.notes[index_in_notes]["color"] = HttpHelper.copy_note_color!.value;
+                              }
+                            }
+                            Navigator.pop(context);
+                          },
+                          child: Text('Paste', style: Styles.alert_button()),
+                        ),
+                        DialogButton(
                           onPressed: () async {
                             if (widget.index != -1)
+                            {
+                              HttpHelper.copy_note_color = Color(widget.color);
+                            }
+                          },
+                          child: Text('Copy', style: Styles.alert_button()),
+                        ),
+                        DialogButton(
+                          onPressed: () async {
+                            if (widget.index != -1 && widget.color != new_color.value)
                             {
                               bool res = await HttpHelper.editNoteColor(widget.noteKey, new_color.value);
                               if (!res)
