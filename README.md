@@ -22,10 +22,9 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 
 
 ## TODO
-- [ ] captcha if config file does not exist (only once, to prevent bots spamming the api)
+- [ ] create new note -> spam save button fast -> go back -> multiple same new notes (only locally)
 - [ ] multiple versions of api so no need for version check
 - [ ] add android:allowBackup flag and set to false so people cant copy the data from the phone using adb
-- [ ] add measures to stop (probably google's) bots from spamming the server
 - [ ] when setting custom url (in settings or loading screen), check if it is correct before saving
 - [ ] more verbose error messages in versionCheck (not always "notok")
 - [ ] better internet connectivity check (maybe also check if can connect to api)
@@ -77,6 +76,7 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] allow back button on phone, definitely pop context before changing to new page cuz memory leak or just too many opened after some time?
 - [ ] test delete note and then on other device edit the deleted note or smth
 - [ ] test open app, delete session and what happens?
+- [ ] handle.php some requests do not check if all values are provided (e.g. msg_seen)
 - [ ] password on startup that is used to encrypt owner key (if somebody stole the phone and knew what he was looking for, this would prevent him from decrypting notes)
 - [ ] qr to transfer owner key (buttons: show qr and scan on other device to import there, show qr and scan on other device to import here (for pc), scan qr)
 - [ ] mby dont call setState inside of @override initState? e.g. editor_page.dart
@@ -91,8 +91,11 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [x] show creation date in both msgs and notes
 - [x] data_sync json assigning fix lol
 - [x] save all settings in cloud
+- [x] double delete confirmation
 - [x] copy colors of notes
 - [x] letter count
+- [x] add measures to stop (probably google's) bots from spamming the server
+- [x] captcha if config file does not exist (only once, to prevent bots spamming the api)
 - [x] fix errors in loading screen not being closable
 - [x] messages tab (so i can send msgs to individuals or all but not as announcements)
 - [x] feedback button

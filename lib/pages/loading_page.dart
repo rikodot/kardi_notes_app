@@ -5,8 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kardi_notes/pages/notes_page.dart';
 import 'package:kardi_notes/pages/settings_page.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:slider_captcha/slider_captcha.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import '../models/captcha.dart';
 import '../models/data_sync.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -175,6 +177,8 @@ class _LoadingPageState extends State<LoadingPage> {
     //load a few config values we do not really care about
     HttpHelper.show_dates_notes = await HttpHelper.get_config_value("show_dates_notes");
     HttpHelper.show_dates_msgs = await HttpHelper.get_config_value("show_dates_msgs");
+    HttpHelper.double_delete_confirm = await HttpHelper.get_config_value("double_delete_confirm");
+    HttpHelper.captcha_done = await HttpHelper.get_config_value("captcha_done");
     HttpHelper.bg_checks = await HttpHelper.get_config_value("bg_checks");
     HttpHelper.old_ordering = await HttpHelper.get_config_value("old_ordering");
     HttpHelper.scale = await HttpHelper.get_config_value("scale");
@@ -312,7 +316,85 @@ class _LoadingPageState extends State<LoadingPage> {
     print("version check done");
     if (stop_loading_animation) { setState(() {}); return; }
 
-    //version is ok, continue to load notes
+    //captcha if not verified before
+    //can happen that user verifies on one pc, copies config file on other does not have to verify there
+    //can happen that user verifies on one pc, verifies on other pc with random owner key, replaces owner key and will not have to verify again because in his config it is already verified
+    //meaning only verifying once per owner key
+    print("captcha start");
+    if (!HttpHelper.custom_api && !HttpHelper.captcha_done)
+    {
+      bool solved = false;
+      int wait_till = 0;
+      while (!solved)
+      {
+        await Alert(
+          style: Styles.alert_norm(),
+          context: context,
+          title: 'Humans only!',
+          content: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: SliderCaptchaClient(
+              titleSlider: "",
+              provider: SliderCaptchaClientProvider(
+                Captcha.bg,
+                Captcha.piece,
+                0,
+              ),
+              onConfirm: (value) async {
+                bool success = value > 0.114 && value < 0.129;
+                int ret = 0;
+                if (wait_till > 0) { ret = wait_till - DateTime.now().millisecondsSinceEpoch ~/ 1000; }
+                if (ret <= 0) { ret = await HttpHelper.captchaCheck(success); }
+                if (ret < 0) //error
+                {
+                  wait_till = 0;
+                  await Alert(
+                    style: Styles.alert_closable(),
+                    context: context,
+                    title: 'ERROR',
+                    desc: 'There has been an unknown error with captcha',
+                    buttons: [],
+                  ).show();
+                }
+                if (ret == 0) //successfully written to db
+                {
+                  if (success) { solved = true; }
+                  else
+                  {
+                    wait_till = 0;
+                    await Alert(
+                      style: Styles.alert_closable(),
+                      context: context,
+                      title: 'Wrong',
+                      desc: 'You will have to try again...',
+                      buttons: [],
+                    ).show();
+                  }
+                }
+                if (ret > 0) //rate limited
+                {
+                  wait_till = DateTime.now().millisecondsSinceEpoch ~/ 1000 + ret;
+                  await Alert(
+                    style: Styles.alert_closable(),
+                    context: context,
+                    title: 'Rate limited',
+                    desc: "Please wait $ret seconds before trying again...",
+                    buttons: [],
+                  ).show();
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+          buttons: [],
+        ).show();
+      }
+      HttpHelper.update_config_value("captcha_done", solved);
+      HttpHelper.captcha_done = solved;
+    }
+    print("captcha end");
+
+    //load notes
     can_continue = false;
     HttpHelper.getNotes().then((value) async {
       if (value.first == false)

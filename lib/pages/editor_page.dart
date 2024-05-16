@@ -815,33 +815,96 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                 Shadow(color: Colors.black, offset: Offset(1, 1))
                               ],
                             ),
-                            onPressed: () {
-                              deleteNote().then((value) {
-                                if (value == false) {
-                                  Alert(
-                                    style: Styles.alert_closable(),
-                                    context: context,
-                                    title: "ERROR",
-                                    desc: "Failed to delete data, check internet connection.",
-                                    buttons: [],
-                                  ).show();
-                                } else {
-                                  Navigator.push(
-                                      context,
-                                      /*MaterialPageRoute(
+                            onPressed: () async {
+                              bool confirmed = !HttpHelper.double_delete_confirm;
+                              if (HttpHelper.double_delete_confirm)
+                              {
+                                String confirm_text = "";
+                                await Alert(
+                                  style: Styles.alert_norm(),
+                                  context: context,
+                                  title: "Double confirmation",
+                                  desc: "Please type 'confirm' into the box below in order to delete this note.",
+                                  content: Row(
+                                    children: [
+                                      Expanded(
+                                        child: ConstrainedBox(
+                                          constraints: BoxConstraints(maxHeight: 40),
+                                          child: TextField(
+                                            controller: TextEditingController(),
+                                            onChanged: (value) { confirm_text = value; },
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  buttons: [
+                                    DialogButton(
+                                      child: Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                        shadows: [
+                                          Shadow(color: Colors.black, offset: Offset(1, 1))
+                                        ],
+                                      ),
+                                      onPressed: () {
+                                        if (confirm_text.toLowerCase().replaceAll(" ", "") == "confirm")
+                                        {
+                                          confirmed = true;
+                                          Navigator.of(context).pop();
+                                        }
+                                      },
+                                    ),
+                                    DialogButton(
+                                      child: Icon(
+                                        Icons.cancel_outlined,
+                                        color: Colors.white,
+                                        shadows: [
+                                          Shadow(color: Colors.black, offset: Offset(1, 1))
+                                        ],
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ).show();
+                              }
+
+                              if (confirmed)
+                              {
+                                deleteNote().then((value) {
+                                  if (value == false) {
+                                    Alert(
+                                      style: Styles.alert_closable(),
+                                      context: context,
+                                      title: "ERROR",
+                                      desc: "Failed to delete data, check internet connection.",
+                                      buttons: [],
+                                    ).show();
+                                  } else {
+                                    Navigator.of(context).pop();
+                                    Navigator.push(
+                                        context,
+                                        /*MaterialPageRoute(
                                               builder: (BuildContext context) => NotesPage()));*/
-                                      PageTransition(
-                                          alignment: Alignment.bottomCenter,
-                                          curve: Curves.easeInOut,
-                                          duration:
-                                          Duration(milliseconds: 600),
-                                          reverseDuration:
-                                          Duration(milliseconds: 600),
-                                          type: PageTransitionType.size,
-                                          child: NotesPage(),
-                                          childCurrent: this.widget));
-                                }
-                              });
+                                        PageTransition(
+                                            alignment: Alignment.bottomCenter,
+                                            curve: Curves.easeInOut,
+                                            duration:
+                                            Duration(milliseconds: 600),
+                                            reverseDuration:
+                                            Duration(milliseconds: 600),
+                                            type: PageTransitionType.size,
+                                            child: NotesPage(),
+                                            childCurrent: this.widget));
+                                  }
+                                });
+                              }
                             },
                           ),
                           DialogButton(

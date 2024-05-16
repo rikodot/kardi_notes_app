@@ -733,6 +733,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  slider_captcha:
+    dependency: "direct main"
+    description:
+      name: slider_captcha
+      sha256: b3ee90c1d9f35df3085119c5741f31d23b22aa39ee896ee7c37f58396abcefc2
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   source_span:
     dependency: transitive
     description:

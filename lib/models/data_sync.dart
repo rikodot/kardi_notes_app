@@ -26,7 +26,7 @@ class HttpHelper
 {
   //api settings
   static const String url = "https://www.kardi.tech/notes/handle.php";
-  static String CURRENT_VER = "2.0.7";
+  static String CURRENT_VER = "2.0.8";
   static bool DEV_MODE = false;
 
   //owner key
@@ -82,8 +82,11 @@ class HttpHelper
   static String custom_api_url = "";
 
   //local settings (less important, we do not check return values)
+  //make sure to load their value on startup in loading_page.dart and save their value below in ensure_config()
   static bool show_dates_notes = true;
   static bool show_dates_msgs = true;
+  static bool double_delete_confirm = false;
+  static bool captcha_done = false;
   static bool bg_checks = false;
   static bool old_ordering = false;
   static double scale = 1.0;
@@ -1362,6 +1365,37 @@ class HttpHelper
     return "notok";
   }
 
+  static Future<int> captchaCheck(bool success) async
+  {
+    try {
+      //create http request
+      var request = http.Request('POST', Uri.parse('${get_url()}?captcha'));
+      //set request body
+      request.body = jsonEncode({
+        "body": DH.enc(jsonEncode({
+          "success": success,
+          "ownerKey": owner_key_hash,
+          "request_id": Utils.randomInt()
+        }), enc_key, enc_iv),
+        "session": session
+      });
+      //send request
+      http.StreamedResponse response = await request.send();
+      //if response is ok
+      if (response.statusCode == 200) {
+        //get response body
+        var body = await response.stream.bytesToString();
+        body = DH.dec(body, enc_key, enc_iv);
+        //if response body is ok
+        if (body == "ok") { return 0; }
+        else { return int.parse(body); }
+      }
+    } catch (e) {
+      return -1;
+    }
+    return -1;
+  }
+
   static Future<bool> set_custom_api_cfg(bool _custom_api, String _custom_api_url) async
   {
     try {
@@ -1415,6 +1449,8 @@ class HttpHelper
       'custom_api_url': custom_api_url,
       'show_dates_notes': show_dates_notes,
       'show_dates_msgs': show_dates_msgs,
+      'double_delete_confirm': double_delete_confirm,
+      'captcha_done': captcha_done,
       'bg_checks': bg_checks,
       'old_ordering': old_ordering,
       'scale': scale,

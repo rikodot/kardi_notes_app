@@ -105,6 +105,34 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                         spacing: 4,
                         children: [
                           Tooltip(
+                            message: 'To prevent accidental deletion, you will be asked twice to confirm your action.',
+                            child:
+                            Text("Double delete confirmation", style: GoogleFonts.poppins(fontSize: 16)),
+                          ),
+                          SizedBox(
+                            height: 24,
+                            child: FittedBox(
+                              fit: BoxFit.fill,
+                              child: Switch(
+                                value: HttpHelper.double_delete_confirm,
+                                onChanged: (value) {
+                                  HttpHelper.double_delete_confirm = value;
+                                  HttpHelper.update_config_value('double_delete_confirm', value);
+                                  setState(() {});
+                                },
+                                activeTrackColor: Colors.lightGreenAccent,
+                                activeColor: Colors.green,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (HttpHelper.connected) ListTile(
+                      title: OverflowBar(
+                        spacing: 4,
+                        children: [
+                          Tooltip(
                             message: 'Default header color of each note.',
                             child:
                             Text("Default note color", style: GoogleFonts.poppins(fontSize: 16)),
