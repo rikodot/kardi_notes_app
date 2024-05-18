@@ -10,6 +10,13 @@ Detailed update log can be found at https://www.kardi.tech/notes/<br>
 Privacy policy can be found at https://www.kardi.tech/privacy-policy/<br>
 Source code for the server logic is in [this repository](https://github.com/rikodot/kardi_notes_api)<br>
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/github.rikodot.kardi_notes/)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=github.rikodot.kardi_notes)
+
 ## Building
 You might need to [setup signing](https://docs.flutter.dev/deployment/android), as `key.properties` and `upload-keystore.jks` files are omitted from the source control.
 
