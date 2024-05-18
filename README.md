@@ -103,6 +103,7 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [x] letter count
 - [x] add measures to stop (probably google's) bots from spamming the server
 - [x] captcha if config file does not exist (only once, to prevent bots spamming the api)
+- [x] make captcha closable so user can change server
 - [x] fix errors in loading screen not being closable
 - [x] messages tab (so i can send msgs to individuals or all but not as announcements)
 - [x] feedback button

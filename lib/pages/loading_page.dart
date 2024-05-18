@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kardi_notes/pages/notes_page.dart';
 import 'package:kardi_notes/pages/settings_page.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:slider_captcha/slider_captcha.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../models/captcha.dart';
@@ -324,66 +323,75 @@ class _LoadingPageState extends State<LoadingPage> {
     if (!HttpHelper.custom_api && !HttpHelper.captcha_done)
     {
       bool solved = false;
+      bool should_stay = true;
       int wait_till = 0;
-      while (!solved)
+      while (!solved && should_stay)
       {
+        should_stay = false;
         await Alert(
-          style: Styles.alert_norm(),
+          style: Styles.alert_closable(),
           context: context,
           title: 'Humans only!',
           content: Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: SliderCaptchaClient(
-              titleSlider: "",
-              provider: SliderCaptchaClientProvider(
-                Captcha.bg,
-                Captcha.piece,
-                0,
-              ),
-              onConfirm: (value) async {
-                bool success = value > 0.114 && value < 0.129;
-                int ret = 0;
-                if (wait_till > 0) { ret = wait_till - DateTime.now().millisecondsSinceEpoch ~/ 1000; }
-                if (ret <= 0) { ret = await HttpHelper.captchaCheck(success); }
-                if (ret < 0) //error
-                {
-                  wait_till = 0;
-                  await Alert(
-                    style: Styles.alert_closable(),
-                    context: context,
-                    title: 'ERROR',
-                    desc: 'There has been an unknown error with captcha',
-                    buttons: [],
-                  ).show();
-                }
-                if (ret == 0) //successfully written to db
-                {
-                  if (success) { solved = true; }
-                  else
+            child: SizedBox(
+              width: double.infinity,
+              height: 275,
+              child: SliderCaptcha(
+                image: Image.memory(
+                  base64Decode(HttpHelper.captcha_img),
+                  fit: BoxFit.fitWidth,
+                ),
+                colorBar: Theme.of(context).colorScheme.primary.withAlpha(180),
+                colorCaptChar: Colors.white,
+                title: "slide",
+                titleStyle: GoogleFonts.poppins(fontSize: HttpHelper.title_height, color: Color(0xEEFBFBFB)),
+                onConfirm: (value) async {
+                  should_stay = true;
+                  bool success = value;
+                  int ret = 0;
+                  if (wait_till > 0) { ret = wait_till - DateTime.now().millisecondsSinceEpoch ~/ 1000; }
+                  if (ret <= 0) { ret = await HttpHelper.captchaCheck(success); }
+                  if (ret < 0) //error
                   {
                     wait_till = 0;
                     await Alert(
                       style: Styles.alert_closable(),
                       context: context,
-                      title: 'Wrong',
-                      desc: 'You will have to try again...',
+                      title: 'ERROR',
+                      desc: 'There has been an unknown error with captcha',
                       buttons: [],
                     ).show();
                   }
-                }
-                if (ret > 0) //rate limited
-                {
-                  wait_till = DateTime.now().millisecondsSinceEpoch ~/ 1000 + ret;
-                  await Alert(
-                    style: Styles.alert_closable(),
-                    context: context,
-                    title: 'Rate limited',
-                    desc: "Please wait $ret seconds before trying again...",
-                    buttons: [],
-                  ).show();
-                }
-                Navigator.of(context).pop();
-              },
+                  if (ret == 0) //successfully written to db
+                  {
+                    if (success) { solved = true; }
+                    else
+                    {
+                      wait_till = 0;
+                      await Alert(
+                        style: Styles.alert_closable(),
+                        context: context,
+                        title: 'Wrong',
+                        desc: 'You will have to try again...',
+                        buttons: [],
+                      ).show();
+                    }
+                  }
+                  if (ret > 0) //rate limited
+                  {
+                    wait_till = DateTime.now().millisecondsSinceEpoch ~/ 1000 + ret;
+                    await Alert(
+                      style: Styles.alert_closable(),
+                      context: context,
+                      title: 'Rate limited',
+                      desc: "Please wait $ret seconds before trying again...",
+                      buttons: [],
+                    ).show();
+                  }
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ),
           buttons: [],
@@ -393,6 +401,7 @@ class _LoadingPageState extends State<LoadingPage> {
       HttpHelper.captcha_done = solved;
     }
     print("captcha end");
+    if (!HttpHelper.custom_api && !HttpHelper.captcha_done) { stop_loading_animation = true; setState(() {}); return; }
 
     //load notes
     can_continue = false;

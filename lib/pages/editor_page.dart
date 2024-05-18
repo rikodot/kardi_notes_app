@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unnecessary_this
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kardi_notes/pages/notes_page.dart';
@@ -7,7 +8,6 @@ import '../models/data_sync.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:cron/cron.dart';
 import '../models/utils.dart';
 
@@ -248,7 +248,18 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                       title: 'Select color',
                       content: SingleChildScrollView(
                           child: ColorPicker(
-                            pickerColor: Color(widget.color),
+                            color: Color(widget.color),
+                            enableOpacity: true,
+                            enableShadesSelection: false,
+                            pickersEnabled: const <ColorPickerType, bool>{
+                              ColorPickerType.both: false,
+                              ColorPickerType.primary: false,
+                              ColorPickerType.accent: false,
+                              ColorPickerType.bw: false,
+                              ColorPickerType.custom: false,
+                              ColorPickerType.customSecondary: false,
+                              ColorPickerType.wheel: true,
+                            },
                             onColorChanged: (Color color) {
                               new_color = color;
                             },
