@@ -33,7 +33,6 @@ class _NotesPageState extends State<NotesPage> {
   double vertical_drag_start = 0;
   /*Size last_size = Utils.logical_size();
   int last_size_change = Utils.now();*/
-  ScrollController _scrollController = ScrollController();
   double point_down_y = 0;
   int last_jump = 0;
   int jump_delay_ms = 50;
@@ -295,6 +294,7 @@ class _NotesPageState extends State<NotesPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScrollController _scrollController = ScrollController();
     return PopScope(
       child: /*LayoutBuilder(
           builder: (context, constraints) {

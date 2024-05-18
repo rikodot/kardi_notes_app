@@ -57,7 +57,6 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] server insert sql if unique fail (right now just errors out the result)
 - [ ] if session not found init new one so possible changed content is not lost and dont have to restart the app
 - [ ] find text in note
-- [ ] upload to app stores
 - [ ] post quantum encryption
 - [ ] option to participate in beta features
 - [ ] study flutter decompilation & obfuscation
@@ -72,7 +71,6 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] blur all option + individual option (when all on -> all individuals on but can turn off individual)
 - [ ] offline mode (if changing note offline, save hash of the unedited version (last online version) and when back online check for mismatch (old online version + our offline) but idk when, maybe on startup, maybe when accessing note, maybe when saving the note)
 - [ ] blur linking devices owner key with unhide toggle button
-- [ ] maintenance mode
 - [ ] option to wipe all data from server automatically
 - [ ] automatically fetch new notes in the background with option to disable
 - [ ] toggle animations option
