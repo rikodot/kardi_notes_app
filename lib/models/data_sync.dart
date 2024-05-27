@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:deepcopy/deepcopy.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_draggable_gridview/flutter_draggable_gridview.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:mutex/mutex.dart';
@@ -26,7 +25,7 @@ class HttpHelper
 {
   //api settings
   static const String url = "https://www.kardi.tech/notes/handle.php";
-  static String CURRENT_VER = "2.0.9";
+  static String CURRENT_VER = "2.1.0";
   static bool DEV_MODE = false;
 
   //owner key
@@ -100,14 +99,11 @@ class HttpHelper
     title_height = 18 * scale;
   }
 
-  static List<DraggableGridItem> get_new_ordering_notes(BuildContext context, Widget childCurrent)
+  static List<Widget> get_new_ordering_notes(BuildContext context, Widget childCurrent)
   {
-    List<DraggableGridItem> list = [];
-    for (var i = 0; i < HttpHelper.display_notes.length; i++)
-    {
-      list.add(DraggableGridItem(
-        isDraggable: true,
-        child: GestureDetector(
+    List<Widget> list = List.generate(HttpHelper.display_notes.length, (i) =>
+        GestureDetector(
+          key: Key(HttpHelper.display_notes[i]["key"]),
           onTap: () {
             /** existing note **/
             if (HttpHelper.display_notes[i]["password"] != '')
@@ -217,8 +213,7 @@ class HttpHelper
                 selected: false),
           ),
         ),
-      ));
-    }
+    );
     return list;
   }
 

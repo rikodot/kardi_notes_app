@@ -14,7 +14,7 @@ import '../models/data_sync.dart';
 import '../models/utils.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:badges/badges.dart' as badges;
-import 'package:flutter_draggable_gridview/flutter_draggable_gridview.dart';
+import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
 
 class NotesPage extends StatefulWidget {
   const NotesPage({Key? key}) : super(key: key);
@@ -33,9 +33,8 @@ class _NotesPageState extends State<NotesPage> {
   double vertical_drag_start = 0;
   /*Size last_size = Utils.logical_size();
   int last_size_change = Utils.now();*/
-  double point_down_y = 0;
-  int last_jump = 0;
-  int jump_delay_ms = 50;
+  ScrollController _scrollController = ScrollController();
+  final _gridViewKey = GlobalKey();
 
   Future<bool> move_note(int old_index, int new_index) async
   {
@@ -294,7 +293,6 @@ class _NotesPageState extends State<NotesPage> {
 
   @override
   Widget build(BuildContext context) {
-    ScrollController _scrollController = ScrollController();
     return PopScope(
       child: /*LayoutBuilder(
           builder: (context, constraints) {
@@ -484,6 +482,7 @@ class _NotesPageState extends State<NotesPage> {
                                 onPressed: () {
                                   //close this dialog
                                   Navigator.pop(context);
+                                  owner_key_temp = owner_key_temp.replaceAll(" ", "");
                                   //check if key exists using checkOwnerKey() and if so change it
                                   HttpHelper.checkOwnerKey(owner_key_temp).then((result) {
                                     if (result) {
@@ -608,8 +607,6 @@ class _NotesPageState extends State<NotesPage> {
               body: SafeArea(
                 minimum: EdgeInsets.all(4.0),
                 child: Listener(
-                  onPointerDown: (details) { if (!HttpHelper.old_ordering) { point_down_y = details.position.dy; } },
-                  onPointerMove: (details) { if (!HttpHelper.old_ordering) { point_down_y = details.position.dy; } },
                   /*onPointerDown: (details) { if (!moving_note_old) { vertical_drag_start = details.position.dy; } },
                   onPointerUp: (details)
                   {
@@ -785,60 +782,54 @@ class _NotesPageState extends State<NotesPage> {
                           ),
                         ),
                     ],
-                  ) : DraggableGridViewBuilder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      crossAxisCount: Scaling.notes_page_cross_axis_count(use_media: true, context: context),
-                    ),
-                    controller: _scrollController,
+                  ) : ReorderableBuilder(
                     children: HttpHelper.get_new_ordering_notes(context, this.widget),
-                    isOnlyLongPress: true, //this means cursor must stay in the same place
-                    //dragCompletion does not work in version 0.0.9 so we stay at 0.0.8 until it is fixed
-                    dragCompletion: (List<DraggableGridItem> list, int beforeIndex, int afterIndex) async {
-                      await move_note(beforeIndex, afterIndex);
-                    },
-                    dragFeedback: (List<DraggableGridItem> list, int index) {
-                      double screen_height_l = Utils.logical_size(use_media: true, context: context).height;
-                      /*print("offset: ${_scrollController.offset}");
-                      print("down_y: $point_down_y");
-                      print("hght_l: $screen_height_l");*/
-                      if (_scrollController.hasClients)
-                      {
-                        if (point_down_y < screen_height_l / 10 && DateTime.now().millisecondsSinceEpoch - last_jump > jump_delay_ms && _scrollController.offset > 0)
-                        {
-                          _scrollController.jumpTo(max(_scrollController.offset - screen_height_l / 20, 0));
-                          last_jump = DateTime.now().millisecondsSinceEpoch;
-                        }
-                        else if (point_down_y > screen_height_l - screen_height_l / 10 && DateTime.now().millisecondsSinceEpoch - last_jump > jump_delay_ms && _scrollController.offset < _scrollController.position.maxScrollExtent!)
-                        {
-                          _scrollController.jumpTo(min(_scrollController.offset + screen_height_l / 20, _scrollController.position.maxScrollExtent!));
-                          last_jump = DateTime.now().millisecondsSinceEpoch;
-                        }
-                      }
+                    scrollController: _scrollController,
+                    onReorder: (ReorderedListFunction reorderedListFunction) async {
+                      List<dynamic> old_list = HttpHelper.get_new_ordering_notes(context, this.widget);
+                      List<dynamic> new_list = reorderedListFunction(old_list);
 
-                      return Material(
-                        borderRadius: BorderRadius.all(Radius.circular(12)),
-                        elevation: 2,
-                        child: NoteMini(
-                            title: HttpHelper.display_notes[index]["title"],
-                            content: HttpHelper.display_notes[index]["content"],
-                            blur: HttpHelper.display_notes[index]["blur"],
-                            password: HttpHelper.display_notes[index]["password"] != '',
-                            color: HttpHelper.display_notes[index]["color"] ??
-                                HttpHelper.default_note_color!.value,
-                            selected: false),
-                      );
+                      int first_index = -1, last_index = -1;
+                      for (int i = 0; i < old_list.length; ++i) { if (old_list[i].key != new_list[i].key) { first_index = i; break; } }
+                      for (int i = old_list.length - 1; i >= 0; --i) { if (old_list[i].key != new_list[i].key) { last_index = i; break; } }
+
+                      //determine which one is old and which one new
+                      if (first_index != -1 && last_index != -1)
+                      {
+                        int old_index = -1, new_index = -1;
+                        bool error = false;
+
+                        //old: 1 2 3 4 5 6
+                        //new: 1 2 6 3 4 5
+
+                        //old: 1 2 3 4 5 6
+                        //new: 1 2 4 5 6 3
+
+                        if (old_list[last_index].key == new_list[first_index].key)
+                        {
+                          old_index = last_index;
+                          new_index = first_index;
+                        }
+                        else if (old_list[first_index].key == new_list[last_index].key)
+                        {
+                          old_index = first_index;
+                          new_index = last_index;
+                        }
+                        else { error = true; }
+
+                        if (!error) { await move_note(old_index, new_index); }
+                      }
+                      setState(() {});
                     },
-                    dragPlaceHolder: (List<DraggableGridItem> list, int index) {
-                      return PlaceHolderWidget(
-                        child: Container(
-                          width: HttpHelper.note_mini_width,
-                          height: HttpHelper.note_mini_height,
-                          decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                          ),
+                    builder: (children) {
+                      return GridView(
+                        key: _gridViewKey,
+                        controller: _scrollController,
+                        children: children,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          crossAxisCount: Scaling.notes_page_cross_axis_count(use_media: true, context: context),
                         ),
                       );
                     },

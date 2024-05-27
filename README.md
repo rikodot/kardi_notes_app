@@ -35,7 +35,6 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] when setting custom url (in settings or loading screen), check if it is correct before saving
 - [ ] more verbose error messages in versionCheck (not always "notok")
 - [ ] better internet connectivity check (maybe also check if can connect to api)
-- [ ] when moving note with new system and is holding at top/bottom - scroll up/down automatically - cursor must be moving otherwise it stops
 - [ ] optional log file of actions with ability to upload to server
 - [ ] (happens only sometimes) new note -> save & go back -> move new note -> refresh notes -> the note that should have been first is moved (maybe to its original position based on creation date - not sure at all)
 - [ ] (happens only sometimes) new note with title and no content -> save & go back -> refresh notes -> false positive changes found
@@ -90,6 +89,10 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] highlight mismatch alerts with red color
 - [ ] color not saved when note not saved yet
 - [ ] background checks are a complete mess - false positives, rework completely possibly
+- [x] when scale changed new reordering notes pretty buggy - after app restart works pretty much ok
+- [x] on android the first note disappears when floatactionbuttons open????? and also does not flush??????
+- [x] scaling does not seem to apply after restarting the app even though it is saved
+- [x] when moving note with new system and is holding at top/bottom - scroll up/down automatically - cursor must be moving otherwise it stops
 - [x] password on notes (new note set locally only if not created on server yet; dont ask for the password for 5 minutes after closing the note; encrypt content with password)
 - [x] make new note, save, go back and download all notes -> shows changes (should not)
 - [x] loading_page if `Error loading data` in loadNotes() after Navigator.push(...) near `//well I did it somehow` comment then whole screen is broken, also flashes black screen even if it works good

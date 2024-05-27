@@ -349,9 +349,17 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                               label: HttpHelper.scale.toStringAsPrecision(2),
                               onChanged: (value) {
                                 HttpHelper.scale = value;
-                                HttpHelper.update_scale();
-                                HttpHelper.update_config_value('scale', value);
                                 setState(() {});
+                              },
+                              onChangeEnd: (value) async {
+                                await HttpHelper.update_config_value('scale', value);
+                                Alert(
+                                  style: Styles.alert_closable(),
+                                  context: context,
+                                  title: 'Scale',
+                                  desc: 'Please restart the app for changes to take effect.',
+                                  buttons: [],
+                                ).show();
                               },
                             ),
                           ),

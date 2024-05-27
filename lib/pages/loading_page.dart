@@ -31,8 +31,6 @@ class _LoadingPageState extends State<LoadingPage> {
 
   void prepare() async
   {
-    await HttpHelper.update_scale();
-
     //do we have internet connection?
     can_continue = false;
     Connectivity().checkConnectivity().then((value) async
@@ -182,6 +180,8 @@ class _LoadingPageState extends State<LoadingPage> {
     HttpHelper.old_ordering = await HttpHelper.get_config_value("old_ordering");
     HttpHelper.scale = await HttpHelper.get_config_value("scale");
 
+    await HttpHelper.update_scale();
+
     //we have internet, check version
     can_continue = false;
     HttpHelper.versionCheck(HttpHelper.CURRENT_VER, HttpHelper.DEV_MODE, Platform.operatingSystem).then((value) async
@@ -232,12 +232,9 @@ class _LoadingPageState extends State<LoadingPage> {
           String instructions_link = json["instructions_link"];
           bool can_ignore = json["can_ignore"];
 
-          List<String> currentVer = HttpHelper.CURRENT_VER.split('.');
-          List<String> latestVer = latest_ver.split('.');
-
-          bool majorHigher = int.parse(currentVer[0]) >= int.parse(latestVer[0]);
-          bool minorHigher = int.parse(currentVer[1]) >= int.parse(latestVer[1]);
-          bool buildHigher = int.parse(currentVer[2]) >= int.parse(latestVer[2]);
+          int currentVer = int.parse(HttpHelper.CURRENT_VER.replaceAll(new RegExp(r"\D"), ""));
+          int latestVer = int.parse(latest_ver.replaceAll(new RegExp(r"\D"), ""));
+          int verdict = currentVer - latestVer; //0 same (should not happen), <0 old, >0 new
 
           await Alert(
             style: Styles.alert_norm(),
@@ -247,7 +244,7 @@ class _LoadingPageState extends State<LoadingPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  (majorHigher && minorHigher && buildHigher) ? 'You are using higher version than latest' : 'New version available',
+                  (verdict > 0) ? 'You are using higher version than latest' : 'New version available',
                   style: GoogleFonts.poppins(fontSize: HttpHelper.text_height),
                 ),
                 if (instructions.isNotEmpty) Text(
@@ -274,7 +271,7 @@ class _LoadingPageState extends State<LoadingPage> {
             buttons: [
               if (latest_link.isNotEmpty) DialogButton(
                 onPressed: () { launchUrlString(latest_link, mode: LaunchMode.externalApplication); },
-                child: Text((majorHigher && minorHigher && buildHigher) ? 'Downgrade' : 'Update', style: Styles.alert_button()),
+                child: Text((verdict > 0) ? 'Downgrade' : 'Update', style: Styles.alert_button()),
               ),
               if (can_ignore) DialogButton(
                 onPressed: () {
