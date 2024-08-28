@@ -29,8 +29,14 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 
 
 ## TODO
+- [ ] search on phone does not scroll to result but selects it
+- [ ] dev web page to view feedback and send messages
+- [ ] note content & feedback content limit 65535 - we limit to plain 40000 and check if encrypted 65535 - stop 40k check and do better > 65535 error so user knows
+- [ ] no need to send passwords to the server
+- [ ] option to highlight text in notes
+- [ ] fdroid first startup entering custom url goes out of boundary and bugs out
+- [ ] different update link for fdroid, apk and google play
 - [ ] create new note -> spam save button fast -> go back -> multiple same new notes (only locally)
-- [ ] multiple versions of api so no need for version check
 - [ ] add android:allowBackup flag and set to false so people cant copy the data from the phone using adb
 - [ ] when setting custom url (in settings or loading screen), check if it is correct before saving
 - [ ] more verbose error messages in versionCheck (not always "notok")
@@ -52,17 +58,14 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] reset notes order button: set all last/next keys to null and first element to null, should force order by creation date
 - [ ] rename package to tech.kardi.notes
 - [ ] smooth edges of content text field in the editor page
-- [ ] on server check for ownerKey in each request or mby send it just one and save in session (new session when changing owner key)
 - [ ] server insert sql if unique fail (right now just errors out the result)
 - [ ] if session not found init new one so possible changed content is not lost and dont have to restart the app
-- [ ] find text in note
 - [ ] post quantum encryption
 - [ ] option to participate in beta features
 - [ ] study flutter decompilation & obfuscation
 - [ ] when green alert is shown, and new one should be shown, dont wait for the old one to finish but stack them vertically on each other
 - [ ] scale of notes on main page and scale of text (and images or whatever)
 - [ ] green comments
-- [ ] stats (how many notes, total amount of words in all notes) ??
 - [ ] script or something to purge sessions and requests from database periodically
 - [ ] too many api fails from ip -> timeout
 - [ ] initSession() add request_id cuz could spam api? maybe?
@@ -75,21 +78,26 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] toggle animations option
 - [ ] error checking version sometimes (update 2024: still?? maybe not)
 - [ ] new owner key -> has messages -> opens message -> goes back using android back button, not the icon back button in app -> still shows unread messages on messages page button (does not update ui)
-- [ ] dev web page to view feedback and send messages
 - [ ] last access time, last edit time ??
 - [ ] allow back button on phone, definitely pop context before changing to new page cuz memory leak or just too many opened after some time?
 - [ ] test delete note and then on other device edit the deleted note or smth
 - [ ] test open app, delete session and what happens?
-- [ ] handle.php some requests do not check if all values are provided (e.g. msg_seen)
 - [ ] password on startup that is used to encrypt owner key (if somebody stole the phone and knew what he was looking for, this would prevent him from decrypting notes)
 - [ ] qr to transfer owner key (buttons: show qr and scan on other device to import there, show qr and scan on other device to import here (for pc), scan qr)
 - [ ] mby dont call setState inside of @override initState? e.g. editor_page.dart
-- [ ] probably should check owner key in all requests, rn if user guesses note key, he can e.g. change blur state of other notes he does not own
 - [ ] custom button color
 - [ ] highlight mismatch alerts with red color
 - [ ] color not saved when note not saved yet
 - [ ] background checks are a complete mess - false positives, rework completely possibly
+- [x] settings page needs white bg on the bottom just like edit page because on phone if setting custom api keyboard moves it up and it overlaps
+- [x] send feedback close the prompt
+- [x] replies and feedbacks do not sort together
+- [x] find text in note
+- [x] multiple versions of api so no need for version check
+- [x] handle.php some requests do not check if all values are provided (e.g. msg_seen)
+- [x] probably should check owner key in all requests, rn if user guesses note key, he can e.g. change blur state of other notes he does not own (actually cant but for double safety)
 - [x] when scale changed new reordering notes pretty buggy - after app restart works pretty much ok
+- [x] stats (how many notes, total amount of words in all notes)
 - [x] on android the first note disappears when floatactionbuttons open????? and also does not flush??????
 - [x] scaling does not seem to apply after restarting the app even though it is saved
 - [x] when moving note with new system and is holding at top/bottom - scroll up/down automatically - cursor must be moving otherwise it stops

@@ -36,6 +36,9 @@ class EditorPage extends StatefulWidget {
 class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateMixin {
   final TextEditingController _titleController = TextEditingController(); //password does not apply
   final TextEditingController _contentController = TextEditingController(); //is decrypted if password used
+  final _contentFocus = FocusNode();
+  List<Pair<int, int>> searches = [];
+  int search_pos = 1;
   bool _isOpened = false;
   final cron = Cron();
   bool last_bg_done = true;
@@ -952,6 +955,65 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                   tooltip: 'Delete note',
                   child: const Icon(Icons.delete),
                 ),
+                /** SEARCH **/
+                if (_isOpened) FloatingActionButton(
+                  heroTag: null,
+                  onPressed: () async {
+                    String searchText = "";
+                    Alert(
+                      style: Styles.alert_norm(),
+                      context: context,
+                      title: 'Search in this note',
+                      content: TextField(
+                        onChanged: (value) { searchText = value; },
+                      ),
+                      buttons: [
+                        DialogButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Cancel', style: Styles.alert_button()),
+                        ),
+                        DialogButton(
+                          onPressed: () async {
+                            //close this dialog
+                            Navigator.pop(context);
+
+                            //search
+                            String to_be_searched = _contentController.text;
+                            int index = -1;
+                            while ((index = to_be_searched.indexOf(searchText)) != -1) {
+                              int last_shift = searches.isEmpty ? 0 : searches.last.second;
+                              searches.add(Pair(last_shift + index, last_shift + index + searchText.length));
+                              to_be_searched = to_be_searched.substring(index + searchText.length);
+                            }
+                            if (searches.isEmpty)
+                            {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Text not found.', style: TextStyle(color: Colors.white)),
+                                  backgroundColor: Colors.redAccent,
+                                  duration: const Duration(seconds: 3),
+                                ),
+                              );
+                            }
+                            else
+                            {
+                              //the whole focus thing is confusing, seems to work, lets hope it does on all devices
+                              _contentFocus.requestFocus();
+                              _contentController.selection = TextSelection(baseOffset: searches[search_pos - 1].first, extentOffset: searches[search_pos - 1].second);
+                              _contentFocus.requestFocus();
+                              setState(() {});
+                            }
+                          },
+                          child: Text('Search', style: Styles.alert_button()),
+                        ),
+                      ],
+                    ).show();
+                  },
+                  tooltip: 'Search in note',
+                  child: Icon(Icons.search),
+                ),
                 /** GO BACK **/
                 if (_isOpened) FloatingActionButton(
                   heroTag: null,
@@ -1029,52 +1091,107 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
             ),
           ),
         ),
-        body: SafeArea(
-          minimum: EdgeInsets.only(top: 4, left: 4, right: 4, bottom: 70),
-          child: Column(
-            children: [
-              /* title text field */
-              TextField(
-                controller: _titleController,
-                style: GoogleFonts.poppins(fontSize: 25),
-                decoration: InputDecoration(
-                  hintStyle: GoogleFonts.poppins(fontSize: 25),
-                  counterText: (HttpHelper.show_dates_notes && widget.index != -1 /*when in new note not saved*/
-                      && HttpHelper.notes[index_in_notes]['creation_date'] != null /*create new note -> go to main page -> DO NOT download notes and open the new note*/)
-                      ? 'Created on ${HttpHelper.notes[index_in_notes]['creation_date']}' : '',
-                  hintText: 'Title',
-                  fillColor: Colors.transparent,
-                  focusColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  filled: true,
-                ),
-                maxLength: 64,
-                maxLines: 1,
-                inputFormatters: [FilteringTextInputFormatter.deny(RegExp('\r'))],
-              ),
-              /* content text field */
-              Expanded(
-                child: TextField(
-                  controller: _contentController,
-                  style: GoogleFonts.poppins(fontSize: 16),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    counterText: '',
-                    hintText: 'Write your note here!',
-                    fillColor: Colors.transparent,
-                    focusColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    filled: true,
+        body: Stack(
+          children: [
+            SafeArea(
+              minimum: EdgeInsets.only(top: 4, left: 4, right: 4, bottom: 70),
+              child: Column(
+                children: [
+                  /* title text field */
+                  TextField(
+                    controller: _titleController,
+                    style: GoogleFonts.poppins(fontSize: 25),
+                    decoration: InputDecoration(
+                      hintStyle: GoogleFonts.poppins(fontSize: 25),
+                      counterText: (HttpHelper.show_dates_notes && widget.index != -1 /*when in new note not saved*/
+                          && HttpHelper.notes[index_in_notes]['creation_date'] != null /*create new note -> go to main page -> DO NOT download notes and open the new note*/)
+                          ? 'Created on ${HttpHelper.notes[index_in_notes]['creation_date']}' : '',
+                      hintText: 'Title',
+                      fillColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      filled: true,
+                    ),
+                    maxLength: 64,
+                    maxLines: 1,
+                    inputFormatters: [FilteringTextInputFormatter.deny(RegExp('\r'))],
                   ),
-                  expands: true,
-                  maxLines: null,
-                  minLines: null,
-                  keyboardType: TextInputType.multiline,
-                  inputFormatters: [FilteringTextInputFormatter.deny(RegExp('\r'))],
-                ),
+                  /* content text field */
+                  Expanded(
+                    child: TextField(
+                      controller: _contentController,
+                      focusNode: _contentFocus,
+                      style: GoogleFonts.poppins(fontSize: 16),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        counterText: '',
+                        hintText: 'Write your note here!',
+                        fillColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        filled: true,
+                      ),
+                      expands: true,
+                      maxLines: null,
+                      minLines: null,
+                      maxLength: 40000, //db max 65535 encrypted + encoded
+                      keyboardType: TextInputType.multiline,
+                      inputFormatters: [FilteringTextInputFormatter.deny(RegExp('\r'))],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            if (searches.isNotEmpty) Positioned(
+              bottom: 10,
+              left: 10,
+              child: Row(
+                children: [
+                  IconButton(
+                      icon: Icon(Icons.cancel_outlined, color: Colors.black54),
+                      iconSize: 24,
+                      onPressed: () async {
+                        searches.clear();
+                        search_pos = 1;
+                        setState(() {});
+                      }
+                  ),
+                  SizedBox(width: 10),
+                  IconButton(
+                    icon: Icon(Icons.keyboard_arrow_down, color: Colors.black54),
+                    iconSize: 24,
+                    onPressed: () async {
+                      if (search_pos == searches.length) { search_pos = 1; }
+                      else { ++search_pos; }
+                      setState(() {});
+
+                      //the whole focus thing is confusing, seems to work, lets hope it does on all devices
+                      _contentFocus.requestFocus();
+                      _contentController.selection = TextSelection(baseOffset: searches[search_pos - 1].first, extentOffset: searches[search_pos - 1].second);
+                      _contentFocus.requestFocus();
+                    }
+                  ),
+                  SizedBox(width: 10),
+                  IconButton(
+                    icon: Icon(Icons.keyboard_arrow_up, color: Colors.black54),
+                    iconSize: 24,
+                    onPressed: () async {
+                      if (search_pos == 1) { search_pos = searches.length; }
+                      else { --search_pos; }
+                      setState(() {});
+
+                      //the whole focus thing is confusing, seems to work, lets hope it does on all devices
+                      _contentFocus.requestFocus();
+                      _contentController.selection = TextSelection(baseOffset: searches[search_pos - 1].first, extentOffset: searches[search_pos - 1].second);
+                      _contentFocus.requestFocus();
+                    }
+                  ),
+                  SizedBox(width: 10),
+                  Text("${search_pos}/${searches.length}", style: GoogleFonts.poppins(fontSize: 12)),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

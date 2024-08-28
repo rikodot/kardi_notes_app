@@ -25,7 +25,7 @@ class HttpHelper
 {
   //api settings
   static const String url = "https://www.kardi.tech/notes/handle.php";
-  static String CURRENT_VER = "2.1.0";
+  static String CURRENT_VER = "2.1.1";
   static bool DEV_MODE = false;
 
   //owner key
@@ -218,7 +218,7 @@ class HttpHelper
   }
 
   //url selection
-  static String get_url() { return custom_api ? custom_api_url : url; }
+  static String get_url() { return "${custom_api ? custom_api_url : url}?version=$CURRENT_VER"; }
 
   //encryption
   static String encrypt(String text, {String key = 'wkhiDGkLnp2aAcGxV9qzFHkiRKBtj9Zx', String iv = 'CFuoA0nQJRap1sfX'})
@@ -306,7 +306,7 @@ class HttpHelper
       notes_check_times[index] = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?get_one'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&get_one'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -361,7 +361,7 @@ class HttpHelper
       global_check_time = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?get_all'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&get_all'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -504,7 +504,7 @@ class HttpHelper
       msg_check_time = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?get_msgs'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&get_msgs'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -552,6 +552,13 @@ class HttpHelper
           }
         }
 
+        //sort them based on creation_date (feedback and msgs are not mixed)
+        json.sort((one, two) {
+          DateTime date_one = DateTime.parse(one['creation_date']);
+          DateTime date_two = DateTime.parse(two['creation_date']);
+          return date_one.compareTo(date_two);
+        });
+
         //set notes to json
         msgs = json;
         msgs = msgs.reversed.toList();
@@ -572,17 +579,21 @@ class HttpHelper
       //title = title.replaceAll('\r', '');
       //content = content.replaceAll('\r', '');
 
+      //can we even send?
+      String content_send = content.isEmpty ? encrypt("\x00", key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)) : encrypt(content, key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16));
+      if (content_send.length > 65535) { throw "content too long"; }
+
       String last_note_key = display_notes.isNotEmpty ? display_notes.first['key'] : "null";
 
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?edit'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&edit'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
           "ownerKey": owner_key_hash,
           "key": key,
           "title": title.isEmpty ? encrypt("\x00", key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)) : encrypt(title, key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)),
-          "content": content.isEmpty ? encrypt("\x00", key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)) : encrypt(content, key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)),
+          "content": content_send,
           "old_title": old_title.isEmpty ? encrypt("\x00", key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)) : encrypt(old_title, key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)),
           "old_content": old_content.isEmpty ? encrypt("\x00", key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)) : encrypt(old_content, key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)),
           "blur": blur,
@@ -695,8 +706,11 @@ class HttpHelper
   static Future<int> sendFeedback(String content) async
   {
     try {
+      //can we even send?
+      if (content.length > 65535) { throw "content too long"; }
+
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?send_feedback'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&send_feedback'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -732,7 +746,7 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?msg_seen'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&msg_seen'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -765,7 +779,7 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?popup_seen'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&popup_seen'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -797,10 +811,11 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?edit_blur'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&edit_blur'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
+          "ownerKey": owner_key_hash,
           "key": key,
           "blur": blur,
           "request_id": Utils.randomInt()
@@ -829,10 +844,11 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?edit_color'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&edit_color'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
+          "ownerKey": owner_key_hash,
           "key": key,
           "color": color == default_note_color!.value ? "null" : color,
           "request_id": Utils.randomInt()
@@ -861,10 +877,11 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?update_last_note_key'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&update_last_note_key'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
+          "ownerKey": owner_key_hash,
           "key": key,
           "last_key": last_key ?? "null",
           "request_id": Utils.randomInt()
@@ -895,10 +912,11 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?update_next_note_key'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&update_next_note_key'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
+          "ownerKey": owner_key_hash,
           "key": key,
           "next_key": next_key ?? "null",
           "request_id": Utils.randomInt()
@@ -929,7 +947,7 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?edit_default_note_color'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&edit_default_note_color'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -961,7 +979,7 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?update_first_note_key'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&update_first_note_key'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -995,10 +1013,11 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?delete'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&delete'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
+          "ownerKey": owner_key_hash,
           "key": key,
           "request_id": Utils.randomInt()
         }), enc_key, enc_iv),
@@ -1079,10 +1098,11 @@ class HttpHelper
       notes_check_times[index] = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?mismatch_check'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&mismatch_check'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
+          "ownerKey": owner_key_hash,
           "key": key,
           "title": title.isEmpty ? encrypt("\x00", key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)) : encrypt(title, key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)),
           "content": content.isEmpty ? encrypt("\x00", key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)) : encrypt(content, key: owner_key.substring(0, 32), iv: owner_key.split('').reversed.join().substring(0, 16)),
@@ -1113,10 +1133,11 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?password_change'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&password_change'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
+          "ownerKey": owner_key_hash,
           "key": key,
           "old_password": old_password,
           "password": password,
@@ -1147,7 +1168,7 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?get_variables'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&get_variables'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -1183,7 +1204,7 @@ class HttpHelper
   static Future<bool> createOwnerKeyOnServer(String key) async
   {
     try {
-      var request = http.Request('POST', Uri.parse('${get_url()}?init_owner_key'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&init_owner_key'));
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
           "ownerKey": hash(key, rounds: 5000, salt: key
@@ -1248,7 +1269,7 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?check_owner_key'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&check_owner_key'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -1296,7 +1317,7 @@ class HttpHelper
       int client_pub = DH.pow_mod_p(DH.g, client_priv);
 
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?init_session'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&init_session'));
       //set request body
       request.body = jsonEncode({
         "client_pub": client_pub
@@ -1334,7 +1355,7 @@ class HttpHelper
       if (owner_key.isEmpty) { if (!await initOwnerKey()) { return "notok"; } }
 
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?version_check'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&version_check'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({
@@ -1364,7 +1385,7 @@ class HttpHelper
   {
     try {
       //create http request
-      var request = http.Request('POST', Uri.parse('${get_url()}?captcha'));
+      var request = http.Request('POST', Uri.parse('${get_url()}&captcha'));
       //set request body
       request.body = jsonEncode({
         "body": DH.enc(jsonEncode({

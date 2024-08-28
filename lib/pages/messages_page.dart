@@ -109,6 +109,7 @@ class _MessagesPageState extends State<MessagesPage> {
                         expands: true,
                         maxLines: null,
                         minLines: null,
+                        maxLength: 40000, //db max 65535 encrypted + encoded
                         keyboardType: TextInputType.multiline,
                         inputFormatters: [FilteringTextInputFormatter.deny(RegExp('\r'))],
                       ),
@@ -158,10 +159,11 @@ class _MessagesPageState extends State<MessagesPage> {
                                 title: "SUCCESS",
                                 desc: "Feedback sent successfully.",
                                 buttons: [],
-                              ).show();
-                              Navigator.of(context).pop();
-                              setState(() {});
-                              _feedbackController.clear();
+                              ).show().then((val) {
+                                Navigator.of(context).pop();
+                                _feedbackController.clear();
+                                setState(() {});
+                              });
                             }
                           });
                         },
