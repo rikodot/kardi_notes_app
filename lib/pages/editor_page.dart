@@ -966,6 +966,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                       title: 'Search in this note',
                       content: TextField(
                         onChanged: (value) { searchText = value; },
+                        autofocus: true,
+                        autocorrect: false,
                       ),
                       buttons: [
                         DialogButton(

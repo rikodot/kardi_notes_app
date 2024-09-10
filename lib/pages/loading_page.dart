@@ -31,6 +31,9 @@ class _LoadingPageState extends State<LoadingPage> {
 
   void prepare() async
   {
+    //first we load default render values (e.g. text height)
+    await HttpHelper.update_scale();
+
     //do we have internet connection?
     can_continue = false;
     Connectivity().checkConnectivity().then((value) async
@@ -179,7 +182,6 @@ class _LoadingPageState extends State<LoadingPage> {
     HttpHelper.bg_checks = await HttpHelper.get_config_value("bg_checks");
     HttpHelper.old_ordering = await HttpHelper.get_config_value("old_ordering");
     HttpHelper.scale = await HttpHelper.get_config_value("scale");
-
     await HttpHelper.update_scale();
 
     //we have internet, check version

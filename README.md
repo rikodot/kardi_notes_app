@@ -29,6 +29,11 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 
 
 ## TODO
+- [ ] have to cancel old search to perform a new one
+- [ ] missing webview activity and access network state permission??
+- [ ] option to export owner key and some debug logs even in the loading screen
+- [ ] consider moving config somewhere where android does not delete it when uninstalling the app
+- [ ] option for longer notes - separate db table only with longer content and normal table would have nullable long_note_id
 - [ ] search on phone does not scroll to result but selects it
 - [ ] dev web page to view feedback and send messages
 - [ ] note content & feedback content limit 65535 - we limit to plain 40000 and check if encrypted 65535 - stop 40k check and do better > 65535 error so user knows
@@ -67,7 +72,7 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] scale of notes on main page and scale of text (and images or whatever)
 - [ ] green comments
 - [ ] script or something to purge sessions and requests from database periodically
-- [ ] too many api fails from ip -> timeout
+- [ ] too many api fails from ip -> timeout AND OTHER API RATE LIMITS
 - [ ] initSession() add request_id cuz could spam api? maybe?
 - [ ] text not all the way down (buttons are over it - maybe?)
 - [ ] blur all option + individual option (when all on -> all individuals on but can turn off individual)
@@ -76,7 +81,6 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] option to wipe all data from server automatically
 - [ ] automatically fetch new notes in the background with option to disable
 - [ ] toggle animations option
-- [ ] error checking version sometimes (update 2024: still?? maybe not)
 - [ ] new owner key -> has messages -> opens message -> goes back using android back button, not the icon back button in app -> still shows unread messages on messages page button (does not update ui)
 - [ ] last access time, last edit time ??
 - [ ] allow back button on phone, definitely pop context before changing to new page cuz memory leak or just too many opened after some time?
@@ -93,6 +97,7 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [x] send feedback close the prompt
 - [x] replies and feedbacks do not sort together
 - [x] find text in note
+- [x] error checking version sometimes (update 2024: still?? maybe not)
 - [x] multiple versions of api so no need for version check
 - [x] handle.php some requests do not check if all values are provided (e.g. msg_seen)
 - [x] probably should check owner key in all requests, rn if user guesses note key, he can e.g. change blur state of other notes he does not own (actually cant but for double safety)
