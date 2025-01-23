@@ -269,12 +269,13 @@ class _NotesPageState extends State<NotesPage> {
 
                 //show error if any fail
                 if (any_fail) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: const Text(
-                          'Failed to save some data, pop up might appear again in the future.',
-                          style: TextStyle(color: Colors.white)),
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to save some data, pop up might appear again in the future.', style: GoogleFonts.poppins(fontSize: 20)),
                       backgroundColor: Colors.red,
-                      duration: const Duration(seconds: 3)));
+                      duration: Duration(seconds: 3)
+                    )
+                  );
                 }
               },
               child: Text("OK", style: Styles.alert_button()),
@@ -337,7 +338,7 @@ class _NotesPageState extends State<NotesPage> {
                           padding: EdgeInsets.fromLTRB(2.5, 2, 2, 3.5),
                           child: Text(
                             HttpHelper.msgs_unread.toString(),
-                            style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
+                            style: GoogleFonts.poppins(fontSize: 14),
                           ),
                         ),
                         //badgeAnimation: badges.BadgeAnimation.fade(toAnimate: false),
@@ -420,9 +421,9 @@ class _NotesPageState extends State<NotesPage> {
                               //show small green text on the bottom for 3 seconds to indicate that notes were downloaded
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text("Successfully obtained notes from server ($same)", style: TextStyle(color: Colors.white)),
+                                  content: Text("Successfully obtained notes from server ($same)", style: GoogleFonts.poppins(fontSize: 20)),
                                   backgroundColor: ((value.elementAt(1) == true) ? Colors.lightGreen : Colors.green),
-                                  duration: const Duration(seconds: 3),
+                                  duration: Duration(seconds: 3),
                                 ),
                               );
                               setState(() {});
@@ -444,7 +445,7 @@ class _NotesPageState extends State<NotesPage> {
                             content: Column(
                               children: [
                                 //add multiline text explaining what owner key is
-                                const Text(
+                                Text(
                                   'This \'owner key\' is a unique for everybody and is used to identify your notes. '
                                       'You can use it to import your notes on another device.\n'
                                       'Simply copy it and paste it in the import field on the other device. '
@@ -452,10 +453,7 @@ class _NotesPageState extends State<NotesPage> {
                                       'If you wish to keep them, write down the old owner key so you can use it later.\n'
                                       'Also keep in mind uninstalling the app might result in deleting the owner key from this device. '
                                       'If you do not back it up, your notes are unrecoverable.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
+                                  style: GoogleFonts.poppins(fontSize: 12),
                                   textAlign: TextAlign.center,
                                 ),
                                 TextField(
@@ -530,7 +528,6 @@ class _NotesPageState extends State<NotesPage> {
                       ),
                       FloatingActionButton(
                         heroTag: null,
-                        backgroundColor: _isOpened ? Colors.redAccent.shade100 : null,
                         onPressed: () { _isOpened = !_isOpened; setState(() {}); },
                         tooltip: _isOpened ? 'Hide options' : 'Show options',
                         child: Icon(_isOpened ? Icons.expand_more : Icons.expand_less),
@@ -655,7 +652,7 @@ class _NotesPageState extends State<NotesPage> {
                               childCurrent: this.widget));
                     }
                   },*/
-                  child: HttpHelper.notes.isEmpty ? const Center(child: Text('You have no notes.', style: TextStyle(fontSize: 16, color: Colors.black87))) :
+                  child: HttpHelper.notes.isEmpty ? Center(child: Text('You have no notes.', style: GoogleFonts.poppins(fontSize: 20))) :
                   (HttpHelper.old_ordering ? GridView.count(
                     padding: EdgeInsets.all(10),
                     crossAxisSpacing: 10,

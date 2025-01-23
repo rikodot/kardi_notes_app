@@ -43,7 +43,7 @@ class _MessagesPageState extends State<MessagesPage> {
         {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Messages refreshed successfully", style: TextStyle(color: Colors.white)),
+              content: Text("Messages refreshed successfully", style: GoogleFonts.poppins(fontSize: 20)),
               backgroundColor: Colors.green,
               duration: const Duration(seconds: 3),
             ),
@@ -191,9 +191,9 @@ class _MessagesPageState extends State<MessagesPage> {
                         //show small green text on the bottom for 3 seconds to indicate that notes were downloaded
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: const Text('Successfully obtained messages from server', style: TextStyle(color: Colors.white)),
+                            content: Text('Successfully obtained messages from server', style: GoogleFonts.poppins(fontSize: 20)),
                             backgroundColor: Colors.green,
-                            duration: const Duration(seconds: 3),
+                            duration: Duration(seconds: 3),
                           ),
                         );
                         setState(() {});
@@ -224,7 +224,6 @@ class _MessagesPageState extends State<MessagesPage> {
                 ),
                 FloatingActionButton(
                   heroTag: null,
-                  backgroundColor: _isOpened ? Colors.redAccent.shade100 : null,
                   onPressed: () { _isOpened = !_isOpened; setState(() {}); },
                   tooltip: _isOpened ? 'Hide options' : 'Show options',
                   child: Icon(_isOpened ? Icons.expand_more : Icons.expand_less),
@@ -257,9 +256,9 @@ class _MessagesPageState extends State<MessagesPage> {
                     //show small green text on the bottom for 3 seconds to indicate that notes were downloaded
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text('Successfully obtained messages from server', style: TextStyle(color: Colors.white)),
+                        content: Text('Successfully obtained messages from server', style: GoogleFonts.poppins(fontSize: 20)),
                         backgroundColor: Colors.green,
-                        duration: const Duration(seconds: 3),
+                        duration: Duration(seconds: 3),
                       ),
                     );
                     setState(() {});
@@ -286,8 +285,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 return Card(
                   child: ListTile(
                     leading: Icon(
-                      HttpHelper.msgs[index]["is_feedback"] == 1 ? Icons.call_made : Icons.call_received,
-                      color: Colors.blue,
+                      HttpHelper.msgs[index]["is_feedback"] == 1 ? Icons.call_made : Icons.call_received
                     ),
                     title: Text(
                         HttpHelper.msgs[index]["title"],

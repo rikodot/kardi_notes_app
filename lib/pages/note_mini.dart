@@ -26,13 +26,13 @@ class _NoteMiniState extends State<NoteMini> {
         height: HttpHelper.note_mini_height,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: Color.fromARGB(54, 158, 158, 158),
-          border: Border.all(color: Colors.transparent),
-          borderRadius: BorderRadius.all(Radius.circular(12)),
+          color: Colors.grey.shade500,
+          borderRadius: BorderRadius.circular(8),
+          //new ordering system inserts shadow on its own, in old we put it here
           boxShadow: [
-             if (widget.selected) BoxShadow(
+            if (widget.selected && HttpHelper.old_ordering) BoxShadow(
               color: Colors.black.withOpacity(0.4),
-              spreadRadius: 2,
+              spreadRadius: 4,
               blurRadius: 3,
             ),
           ],
@@ -42,27 +42,11 @@ class _NoteMiniState extends State<NoteMini> {
           Expanded(
             child: Container(
               alignment: Alignment.centerLeft,
-              //color: widget.color != HttpHelper.default_note_color!.value ? Color(widget.color) : (widget.password ? Colors.red.shade400 : (widget.blur ? Colors.green.shade900 : HttpHelper.default_note_color)),
               color: widget.color != HttpHelper.default_note_color!.value ? Color(widget.color) : HttpHelper.default_note_color,
               padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0),
               child: Text(widget.title,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(fontSize: 16)),
-              foregroundDecoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.black.withOpacity(0.2),
-                    width: 1.0,
-                  ),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    spreadRadius: 4,
-                    blurRadius: 6,
-                  ),
-                ],
-              ),
+                  style: GoogleFonts.poppins(fontSize: 16))
             ),
           ),
           /*content*/

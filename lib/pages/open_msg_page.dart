@@ -92,7 +92,6 @@ class _OpenMsgPageState extends State<OpenMsgPage> with SingleTickerProviderStat
                 ),
                 FloatingActionButton(
                   heroTag: null,
-                  backgroundColor: _isOpened ? Colors.redAccent.shade100 : null,
                   onPressed: () { _isOpened = !_isOpened; setState(() {}); },
                   tooltip: _isOpened ? 'Hide options' : 'Show options',
                   child: Icon(_isOpened ? Icons.expand_more : Icons.expand_less),

@@ -25,7 +25,7 @@ class HttpHelper
 {
   //api settings
   static const String url = "https://www.kardi.tech/notes/handle.php";
-  static String CURRENT_VER = "2.1.2";
+  static String CURRENT_VER = "2.1.3";
   static bool DEV_MODE = false;
 
   //owner key
@@ -71,6 +71,10 @@ class HttpHelper
   //mutexes
   static final config_mutex = Mutex();
 
+  //config preload
+  //some config values like dark theme need to be loaded waaaay early
+  static String? cfg_preload_err = null;
+
   //synced settings
   static String? first_note_key = null;
   static Color? default_note_color = null;
@@ -89,6 +93,8 @@ class HttpHelper
   static bool bg_checks = false;
   static bool old_ordering = false;
   static double scale = 1.0;
+  static Color default_color = Colors.blueAccent;
+  static Brightness default_brightness = Brightness.light;
 
   //scale updating
   static update_scale()
@@ -1470,6 +1476,8 @@ class HttpHelper
       'bg_checks': bg_checks,
       'old_ordering': old_ordering,
       'scale': scale,
+      'default_color': default_color.value,
+      'default_brightness': default_brightness == Brightness.dark,
     };
 
     try
@@ -1625,16 +1633,16 @@ class HttpHelper
                   children: [
                     TextSpan(
                       text: 'Instructions to setup custom server can be found at ',
-                      style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Colors.black45),
+                      style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Theme.of(context).textTheme.bodyMedium?.color),
                     ),
                     TextSpan(
                         text: api_instructions,
-                        style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Colors.blue, decoration: TextDecoration.underline),
+                        style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Theme.of(context).colorScheme.primary, decoration: TextDecoration.underline),
                         recognizer: TapGestureRecognizer()..onTap = () { launchUrlString(api_instructions, mode: LaunchMode.externalApplication); }
                     ),
                     TextSpan(
                       text: '.',
-                      style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Colors.black45),
+                      style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Theme.of(context).textTheme.bodyMedium?.color),
                     ),
                   ],
                 ),
@@ -1646,25 +1654,22 @@ class HttpHelper
                 },
                 child: Text('Use default server', style: Styles.alert_button()),
               ),
-              Text('or', style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Colors.black45)),
+              Text('or', style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Theme.of(context).textTheme.bodyMedium?.color)),
               SizedBox(height: 4),
               Row(
                 children: [
                   Expanded(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxHeight: 40),
-                      child: TextField(
-                        controller: TextEditingController(),
-                        onChanged: (value) { custom_api_url = value; },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Custom server URL',
-                        ),
+                    child: TextField(
+                      controller: TextEditingController(),
+                      onChanged: (value) { custom_api_url = value; },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Custom server URL',
                       ),
                     ),
                   ),
                   IconButton(
-                      icon: Icon(Icons.save, color: Colors.black54),
+                      icon: Icon(Icons.save),
                       iconSize: 24,
                       onPressed: () async {
                         if (custom_api_url.isNotEmpty)

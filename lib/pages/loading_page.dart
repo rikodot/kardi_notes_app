@@ -68,6 +68,34 @@ class _LoadingPageState extends State<LoadingPage> {
     //option to select server before any packets are sent
     //await HttpHelper.default_server_option_first_launch(context);
 
+    //preload config errors?
+    can_continue = false;
+    if (HttpHelper.cfg_preload_err != null)
+    {
+      stop_loading_animation = true;
+      await Alert(
+        style: Styles.alert_norm(),
+        context: context,
+        title: 'ERROR',
+        desc: 'Error preloading config (${HttpHelper.cfg_preload_err!})\n\nThis can likely be ignored, app theme and color settings might not work.',
+        buttons: [
+          DialogButton(
+            onPressed: () {
+              stop_loading_animation = false;
+              Navigator.of(context).pop();
+            },
+            child: Text('OK', style: Styles.alert_button()),
+          ),
+        ],
+      ).show();
+      print("preload error dialog closed");
+      can_continue = true;
+    }
+    else { can_continue = true; }
+    while (!can_continue) { await Future.delayed(const Duration(milliseconds: 100)); }
+    print("preload error done");
+    if (stop_loading_animation) { setState(() {}); return; }
+
     //ensure config
     can_continue = false;
     HttpHelper.ensure_config().then((value) async
@@ -262,7 +290,7 @@ class _LoadingPageState extends State<LoadingPage> {
                       ),
                       TextSpan(
                         text: instructions_link,
-                        style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, color: Colors.blue, decoration: TextDecoration.underline),
+                        style: GoogleFonts.poppins(fontSize: HttpHelper.text_height, decoration: TextDecoration.underline),
                         recognizer: TapGestureRecognizer()..onTap = () { launchUrlString(instructions_link, mode: LaunchMode.externalApplication); }
                       ),
                     ],
@@ -341,10 +369,10 @@ class _LoadingPageState extends State<LoadingPage> {
                   base64Decode(HttpHelper.captcha_img),
                   fit: BoxFit.fitWidth,
                 ),
-                colorBar: Theme.of(context).colorScheme.primary.withAlpha(180),
-                colorCaptChar: Colors.white,
+                colorBar: Theme.of(context).colorScheme.surface,
+                colorCaptChar: Theme.of(context).colorScheme.primary,
                 title: "slide",
-                titleStyle: GoogleFonts.poppins(fontSize: HttpHelper.title_height, color: Color(0xEEFBFBFB)),
+                titleStyle: GoogleFonts.poppins(fontSize: HttpHelper.title_height),
                 onConfirm: (value) async {
                   should_stay = true;
                   bool success = value;
@@ -479,7 +507,6 @@ class _LoadingPageState extends State<LoadingPage> {
                     ),
                     FloatingActionButton(
                       heroTag: null,
-                      backgroundColor: _isOpened ? Colors.redAccent.shade100 : null,
                       onPressed: () { _isOpened = !_isOpened; setState(() {}); },
                       tooltip: _isOpened ? 'Hide options' : 'Show options',
                       child: Icon(_isOpened ? Icons.expand_more : Icons.expand_less),

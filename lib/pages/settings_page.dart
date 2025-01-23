@@ -51,6 +51,107 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                             spacing: 4,
                             children: [
                               Tooltip(
+                                message: 'Default app theme color.',
+                                child:
+                                Text("Default app theme color", style: GoogleFonts.poppins(fontSize: 16)),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.color_lens),
+                                iconSize: 24,
+                                onPressed: () {
+                                  Color new_color = HttpHelper.default_color;
+                                  //show a pop up to select color
+                                  Alert(
+                                    style: Styles.alert_norm(),
+                                    context: context,
+                                    title: 'Select color',
+                                    content: SingleChildScrollView(
+                                        child: ColorPicker(
+                                          color: HttpHelper.default_color,
+                                          enableOpacity: true,
+                                          enableShadesSelection: false,
+                                          pickersEnabled: const <ColorPickerType, bool>{
+                                            ColorPickerType.both: false,
+                                            ColorPickerType.primary: false,
+                                            ColorPickerType.accent: false,
+                                            ColorPickerType.bw: false,
+                                            ColorPickerType.custom: false,
+                                            ColorPickerType.customSecondary: false,
+                                            ColorPickerType.wheel: true,
+                                          },
+                                          onColorChanged: (Color color) {
+                                            new_color = color;
+                                          },
+                                        )
+                                    ),
+                                    buttons: [
+                                      DialogButton(
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          HttpHelper.default_color = new_color;
+                                          HttpHelper.update_config_value('default_color', new_color.value);
+                                          await Alert(
+                                            style: Styles.alert_closable(),
+                                            context: context,
+                                            title: 'Default color',
+                                            desc: 'Please restart the app for changes to take effect.',
+                                            buttons: [],
+                                          ).show();
+                                          setState(() {});
+                                        },
+                                        child: Text('OK', style: Styles.alert_button()),
+                                      ),
+                                      DialogButton(
+                                        onPressed: () { Navigator.pop(context); },
+                                        child: Text('Cancel', style: Styles.alert_button()),
+                                      ),
+                                    ],
+                                  ).show();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (HttpHelper.connected) ListTile(
+                          title: OverflowBar(
+                            spacing: 4,
+                            children: [
+                              Tooltip(
+                                message: 'Dark theme.',
+                                child:
+                                Text("Dark theme", style: GoogleFonts.poppins(fontSize: 16)),
+                              ),
+                              SizedBox(
+                                height: 24,
+                                child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child: Switch(
+                                    value: HttpHelper.default_brightness == Brightness.dark,
+                                    onChanged: (value) async {
+                                      HttpHelper.default_brightness = value ? Brightness.dark : Brightness.light;
+                                      HttpHelper.update_config_value('default_brightness', value);
+                                      await Alert(
+                                        style: Styles.alert_closable(),
+                                        context: context,
+                                        title: 'Dark theme',
+                                        desc: 'Please restart the app for changes to take effect.',
+                                        buttons: [],
+                                      ).show();
+                                      setState(() {});
+                                    },
+                                    activeTrackColor: Colors.lightGreenAccent,
+                                    activeColor: Colors.green,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (HttpHelper.connected) ListTile(
+                          title: OverflowBar(
+                            spacing: 4,
+                            children: [
+                              Tooltip(
                                 message: 'Show creation dates of your notes.',
                                 child:
                                 Text("Show dates in notes", style: GoogleFonts.poppins(fontSize: 16)),
@@ -140,7 +241,7 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                                 Text("Default note color", style: GoogleFonts.poppins(fontSize: 16)),
                               ),
                               IconButton(
-                                icon: Icon(Icons.color_lens, color: Colors.black54),
+                                icon: Icon(Icons.color_lens),
                                 iconSize: 24,
                                 onPressed: () {
                                   Color new_color = HttpHelper.default_note_color!;
@@ -176,9 +277,9 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                                             if (!result) {
                                               ScaffoldMessenger.of(context).showSnackBar(
                                                 SnackBar(
-                                                  content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
-                                                  backgroundColor: Colors.redAccent,
-                                                  duration: const Duration(seconds: 3),
+                                                  content: Text('Failed to change the color', style: GoogleFonts.poppins(fontSize: 20)),
+                                                  backgroundColor: Colors.red,
+                                                  duration: Duration(seconds: 3),
                                                 ),
                                               );
                                             } else {
@@ -201,9 +302,9 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                                               if (!result) {
                                                 ScaffoldMessenger.of(context).showSnackBar(
                                                   SnackBar(
-                                                    content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
-                                                    backgroundColor: Colors.redAccent,
-                                                    duration: const Duration(seconds: 3),
+                                                    content: Text('Failed to change the color', style: GoogleFonts.poppins(fontSize: 20)),
+                                                    backgroundColor: Colors.red,
+                                                    duration: Duration(seconds: 3),
                                                   ),
                                                 );
                                               } else {
@@ -308,7 +409,7 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                                 ),
                               ),
                               if (custom_api != HttpHelper.custom_api_temp || (custom_api && custom_api_url.isNotEmpty && custom_api_url != HttpHelper.custom_api_url_temp)) IconButton(
-                                icon: Icon(Icons.save, color: Colors.black54),
+                                icon: Icon(Icons.save),
                                 iconSize: 24,
                                 onPressed: () {
                                   if (custom_api) {
@@ -437,9 +538,9 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                                     Navigator.pop(context);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(success ? 'Config repaired, please restart app to apply.' : 'Failed to repair config.', style: TextStyle(color: Colors.white)),
+                                        content: Text(success ? 'Config repaired, please restart app to apply.' : 'Failed to repair config.', style: GoogleFonts.poppins(fontSize: 20)),
                                         backgroundColor: success ? Colors.green : Colors.red,
-                                        duration: const Duration(seconds: 3),
+                                        duration: Duration(seconds: 3),
                                       ),
                                     );
                                   }
@@ -448,9 +549,9 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
                                     Navigator.pop(context);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: const Text('Nothing to repair.', style: TextStyle(color: Colors.white)),
+                                        content: Text('Nothing to repair.', style: GoogleFonts.poppins(fontSize: 20)),
                                         backgroundColor: Colors.orangeAccent,
-                                        duration: const Duration(seconds: 3),
+                                        duration: Duration(seconds: 3),
                                       ),
                                     );
                                   }
@@ -507,7 +608,6 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
               ),
               FloatingActionButton(
                 heroTag: null,
-                backgroundColor: _isOpened ? Colors.redAccent.shade100 : null,
                 onPressed: () { _isOpened = !_isOpened; setState(() {}); },
                 tooltip: _isOpened ? 'Hide options' : 'Show options',
                 child: Icon(_isOpened ? Icons.expand_more : Icons.expand_less),

@@ -79,7 +79,7 @@ class Styles
   }
   static TextStyle alert_button()
   {
-    return GoogleFonts.poppins(color: Color(0xF0F0F0F0), fontSize: HttpHelper.text_height);
+    return GoogleFonts.poppins(fontSize: HttpHelper.text_height);
   }
 }
 

@@ -17,8 +17,8 @@ class SliderCaptcha extends StatefulWidget {
     this.title = 'Slide to authenticate',
     this.titleStyle,
     this.captchaSize = 30,
-    this.colorBar = Colors.red,
-    this.colorCaptChar = Colors.blue,
+    required this.colorBar,
+    required this.colorCaptChar,
     this.controller,
     this.borderImager = 0,
     this.imageToBarPadding = 3,
@@ -77,16 +77,17 @@ class _SliderCaptchaState extends State<SliderCaptcha>
             ),
           ),
           SizedBox(height: widget.imageToBarPadding),
+          //slide bar
           Container(
             height: heightSliderBar,
             width: double.infinity,
             decoration: BoxDecoration(
               color: widget.colorBar,
-              boxShadow: const <BoxShadow>[
+              boxShadow: <BoxShadow>[
                 BoxShadow(
                   offset: Offset(0, 0),
                   blurRadius: 2,
-                  color: Colors.grey,
+                  color: widget.colorBar.withOpacity(0.5),
                 )
               ],
             ),
@@ -113,6 +114,7 @@ class _SliderCaptchaState extends State<SliderCaptcha>
                     onHorizontalDragEnd: (DragEndDetails detail) {
                       checkAnswer();
                     },
+                    //slide button
                     child: Container(
                       height: heightSliderBar,
                       width: heightSliderBar,
@@ -120,7 +122,7 @@ class _SliderCaptchaState extends State<SliderCaptcha>
                       decoration: widget.slideContainerDecoration ??
                           BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: Colors.white,
+                            color: widget.colorCaptChar,
                           ),
                       child: widget.icon ??
                           const Icon(Icons.arrow_forward_rounded),
@@ -264,7 +266,7 @@ class SliderCaptCha extends SingleChildRenderObjectWidget {
     required this.offsetX,
     required this.offsetY,
     this.sizeCaptChar = 40,
-    this.colorCaptChar = Colors.blue,
+    required this.colorCaptChar,
     required this.sliderController,
     Key? key,
   }) : super(key: key, child: image);
@@ -277,7 +279,6 @@ class SliderCaptCha extends SingleChildRenderObjectWidget {
     renderObject.offsetY = offsetY;
     renderObject.colorCaptChar = colorCaptChar;
     renderObject.sizeCaptChar = sizeCaptChar;
-    renderObject.colorCaptChar = colorCaptChar;
     return renderObject;
   }
 
@@ -287,7 +288,6 @@ class SliderCaptCha extends SingleChildRenderObjectWidget {
     renderObject.offsetY = offsetY;
     renderObject.colorCaptChar = colorCaptChar;
     renderObject.sizeCaptChar = sizeCaptChar;
-    renderObject.colorCaptChar = colorCaptChar;
     super.updateRenderObject(context, renderObject);
   }
 }
@@ -299,7 +299,7 @@ class RenderTestSliderCaptChar extends RenderProxyBox {
   double offsetY = 0;
   double createX = 0;
   double createY = 0;
-  Color colorCaptChar = Colors.black;
+  Color? colorCaptChar;
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -312,7 +312,7 @@ class RenderTestSliderCaptChar extends RenderProxyBox {
     }
 
     Paint paint = Paint()
-      ..color = colorCaptChar
+      ..color = colorCaptChar!
       ..strokeWidth = strokeWidth;
 
     if (createX == 0 && createY == 0) {
@@ -400,7 +400,6 @@ class PuzzlePiecePainter extends CustomPainter {
   @override
   Future<void> paint(Canvas canvas, Size size) async {
     final Paint paint = Paint()
-      ..color = Colors.blue
       ..style = paintingStyle
       ..strokeWidth = 3.0;
 

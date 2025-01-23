@@ -70,7 +70,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
             content: Column(
               children: [
                 Text('Since the time you opened this note, it has been modified from other device. These changes are not present here.'),
-                if (local_mismatch) Text('You have also made changes to this note. If you reload the note, any unsaved changes made from this device will be lost.', style: TextStyle(color: Colors.red.shade400)),
+                if (local_mismatch) Text('You have also made changes to this note. If you reload the note, any unsaved changes made from this device will be lost.', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                 Text('Do you want to reload the note from server?'),
               ],
             ),
@@ -276,13 +276,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                               bool res = await HttpHelper.editNoteColor(widget.noteKey, HttpHelper.copy_note_color!.value);
                               if (!res)
                               {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
-                                    backgroundColor: Colors.redAccent,
-                                    duration: const Duration(seconds: 3),
-                                  ),
-                                );
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text('Failed to change the color', style: GoogleFonts.poppins(fontSize: 20)),
+                                  backgroundColor: Colors.red,
+                                  duration: Duration(seconds: 3),
+                                ));
                               }
                               else
                               {
@@ -311,13 +309,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                               bool res = await HttpHelper.editNoteColor(widget.noteKey, new_color.value);
                               if (!res)
                               {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: const Text('Failed to change the color', style: TextStyle(color: Colors.white)),
-                                    backgroundColor: Colors.redAccent,
-                                    duration: const Duration(seconds: 3),
-                                  ),
-                                );
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text('Failed to change the color', style: GoogleFonts.poppins(fontSize: 20)),
+                                  backgroundColor: Colors.red,
+                                  duration: Duration(seconds: 3),
+                                ));
                               }
                               else
                               {
@@ -341,13 +337,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                               bool res = await HttpHelper.editNoteColor(widget.noteKey, HttpHelper.default_note_color!.value);
                               if (!res)
                               {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: const Text('Failed to reset the color', style: TextStyle(color: Colors.white)),
-                                    backgroundColor: Colors.redAccent,
-                                    duration: const Duration(seconds: 3),
-                                  ),
-                                );
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text('Failed to reset the color', style: GoogleFonts.poppins(fontSize: 20)),
+                                  backgroundColor: Colors.red,
+                                  duration: Duration(seconds: 3),
+                                ));
                               }
                               else
                               {
@@ -373,14 +367,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                   {
                     if (HttpHelper.encrypt_content(_contentController.text, widget.password) == widget.content && _titleController.text == widget.title && widget.index != -1)
                     {
-                      //show small orange text on the bottom for 3 seconds to indicate that there were no changes
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('No changes to be saved', style: TextStyle(color: Colors.white)),
-                          backgroundColor: Colors.orange,
-                          duration: const Duration(seconds: 3),
-                        ),
-                      );
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('No changes to be saved', style: GoogleFonts.poppins(fontSize: 20)),
+                        backgroundColor: Colors.red,
+                        duration: Duration(seconds: 3),
+                      ));
                     }
                     else
                     {
@@ -409,7 +400,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                         'This note was "123". You opened it on your computer and on your mobile at the same time.\n'
                                         'After some time you changed the note on your computer to "123abc". Some time later you opened the note on the phone without reloading (so note was still saying "123").\n'
                                         'On the phone you edited it to "123xyz" and this alert showed up. If you press ',
-                                    style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54),
+                                    style: GoogleFonts.poppins(fontSize: 16, color: Theme.of(context).textTheme.bodyMedium?.color),
                                   ),
                                   WidgetSpan(
                                     child: Icon(Icons.check, size: 14),
@@ -417,27 +408,21 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                   TextSpan(
                                     text: ' "123xyz" will be saved and "123abc" discarded.\n'
                                         'If you press ',
-                                    style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54),
+                                    style: GoogleFonts.poppins(fontSize: 16, color: Theme.of(context).textTheme.bodyMedium?.color),
                                   ),
                                   WidgetSpan(
                                     child: Icon(Icons.cancel_outlined, size: 14),
                                   ),
                                   TextSpan(
                                     text: ' "123xyz" will be discarded and "123abc" will be saved.',
-                                    style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54),
+                                    style: GoogleFonts.poppins(fontSize: 16, color: Theme.of(context).textTheme.bodyMedium?.color),
                                   ),
                                 ],
                               ),
                             ),
                             buttons: [
                               DialogButton(
-                                child: Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(color: Colors.black, offset: Offset(1, 1))
-                                  ],
-                                ),
+                                child: Icon(Icons.check),
                                 onPressed: () {
                                   writeNote(true).then((value) {
                                     if (value == -1) {
@@ -459,10 +444,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
 
                                       //show small green text on the bottom for 3 seconds to indicate that the note was saved
                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                        content: Text(
-                                          'Saved',
-                                          style: GoogleFonts.poppins(fontSize: 20),
-                                        ),
+                                        content: Text('Saved', style: GoogleFonts.poppins(fontSize: 20)),
                                         backgroundColor: Colors.green,
                                         duration: Duration(seconds: 3),
                                       ));
@@ -472,15 +454,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                 },
                               ),
                               DialogButton(
-                                child: Icon(
-                                  Icons.cancel_outlined,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                        color: Colors.black,
-                                        offset: Offset(1, 1))
-                                  ],
-                                ),
+                                child: Icon(Icons.cancel_outlined),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -496,14 +470,11 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                           widget.index = value;
                           index_in_notes = HttpHelper.notes.indexWhere((element) => element["key"] == widget.noteKey);
 
-                          //show small green text on the bottom for 3 seconds to indicate that the note was saved
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text('Successfully saved', style: TextStyle(color: Colors.white)),
-                              backgroundColor: Colors.green,
-                              duration: const Duration(seconds: 3),
-                            ),
-                          );
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Successfully saved', style: GoogleFonts.poppins(fontSize: 20)),
+                            backgroundColor: Colors.green,
+                            duration: Duration(seconds: 3),
+                          ));
                         }
                       });
                     }
@@ -532,7 +503,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                         //show small green text on the bottom for 3 seconds to indicate that note was downloaded
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text("Successfully obtained note from server ($same)", style: TextStyle(color: Colors.white)),
+                            content: Text("Successfully obtained note from server ($same)", style: GoogleFonts.poppins(fontSize: 20)),
                             backgroundColor: ((value.elementAt(1) == true) ? Colors.lightGreen : Colors.green),
                             duration: const Duration(seconds: 3),
                           ),
@@ -651,10 +622,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                           const Text(
                             'This password will be used to encrypt the note. If you forget the password, the note will be lost forever.\n'
                                 'If you want to remove the password, leave the field empty and press "Save".',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
+                            style: TextStyle(fontSize: 12),
                             textAlign: TextAlign.center,
                           ),
                           TextField(
@@ -822,13 +790,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                         title: 'Are you sure?',
                         buttons: [
                           DialogButton(
-                            child: Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(color: Colors.black, offset: Offset(1, 1))
-                              ],
-                            ),
+                            child: Icon(Icons.check),
                             onPressed: () async {
                               bool confirmed = !HttpHelper.double_delete_confirm;
                               if (HttpHelper.double_delete_confirm)
@@ -857,13 +819,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                   ),
                                   buttons: [
                                     DialogButton(
-                                      child: Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                        shadows: [
-                                          Shadow(color: Colors.black, offset: Offset(1, 1))
-                                        ],
-                                      ),
+                                      child: Icon(Icons.check),
                                       onPressed: () {
                                         if (confirm_text.toLowerCase().replaceAll(" ", "") == "confirm")
                                         {
@@ -873,13 +829,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                       },
                                     ),
                                     DialogButton(
-                                      child: Icon(
-                                        Icons.cancel_outlined,
-                                        color: Colors.white,
-                                        shadows: [
-                                          Shadow(color: Colors.black, offset: Offset(1, 1))
-                                        ],
-                                      ),
+                                      child: Icon(Icons.cancel_outlined),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                         Navigator.of(context).pop();
@@ -922,13 +872,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                             },
                           ),
                           DialogButton(
-                            child: Icon(
-                              Icons.cancel_outlined,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(color: Colors.black, offset: Offset(1, 1))
-                              ],
-                            ),
+                            child: Icon(Icons.cancel_outlined),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
@@ -993,9 +937,9 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                             {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text('Text not found.', style: TextStyle(color: Colors.white)),
-                                  backgroundColor: Colors.redAccent,
-                                  duration: const Duration(seconds: 3),
+                                  content: Text('Text not found.', style: GoogleFonts.poppins(fontSize: 20)),
+                                  backgroundColor: Colors.red,
+                                  duration: Duration(seconds: 3),
                                 ),
                               );
                             }
@@ -1028,13 +972,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                         title: 'Changes detected, discard them?',
                         buttons: [
                           DialogButton(
-                            child: Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(color: Colors.black, offset: Offset(1, 1))
-                              ],
-                            ),
+                            child: Icon(Icons.check),
                             onPressed: () async {
                               Navigator.pop(context);
                               Navigator.push(context,
@@ -1050,13 +988,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                             },
                           ),
                           DialogButton(
-                            child: Icon(
-                              Icons.cancel_outlined,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(color: Colors.black, offset: Offset(1, 1))
-                              ],
-                            ),
+                            child: Icon(Icons.cancel_outlined),
                             onPressed: () async {
                               Navigator.of(context).pop();
                             },
@@ -1084,7 +1016,6 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                 ),
                 FloatingActionButton(
                   heroTag: null,
-                  backgroundColor: _isOpened ? Colors.redAccent.shade100 : null,
                   onPressed: () { _isOpened = !_isOpened; setState(() {}); },
                   tooltip: _isOpened ? 'Hide options' : 'Show options',
                   child: Icon(_isOpened ? Icons.expand_more : Icons.expand_less),
@@ -1150,7 +1081,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
               child: Row(
                 children: [
                   IconButton(
-                      icon: Icon(Icons.cancel_outlined, color: Colors.black54),
+                      icon: Icon(Icons.cancel_outlined),
                       iconSize: 24,
                       onPressed: () async {
                         searches.clear();
@@ -1160,7 +1091,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                   ),
                   SizedBox(width: 10),
                   IconButton(
-                    icon: Icon(Icons.keyboard_arrow_down, color: Colors.black54),
+                    icon: Icon(Icons.keyboard_arrow_down),
                     iconSize: 24,
                     onPressed: () async {
                       if (search_pos == searches.length) { search_pos = 1; }
@@ -1175,7 +1106,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                   ),
                   SizedBox(width: 10),
                   IconButton(
-                    icon: Icon(Icons.keyboard_arrow_up, color: Colors.black54),
+                    icon: Icon(Icons.keyboard_arrow_up),
                     iconSize: 24,
                     onPressed: () async {
                       if (search_pos == 1) { search_pos = searches.length; }
