@@ -327,7 +327,7 @@ class _NotesPageState extends State<NotesPage> {
                                   reverseDuration: Duration(milliseconds: 600),
                                   type: PageTransitionType.size,
                                   child: SettingsPage(),
-                                  childCurrent: this.widget));
+                                  childCurrent: this.widget)).then((_) { setState(() {}); });
                         },
                         tooltip: 'Settings',
                         child: const Icon(Icons.settings),
@@ -367,8 +367,7 @@ class _NotesPageState extends State<NotesPage> {
                                         reverseDuration: Duration(milliseconds: 600),
                                         type: PageTransitionType.size,
                                         child: MessagesPage(),
-                                        childCurrent: this.widget)
-                                );
+                                        childCurrent: this.widget)).then((_) { setState(() {}); });
                               }
                             });
                           },
@@ -396,7 +395,7 @@ class _NotesPageState extends State<NotesPage> {
                                       blur: false,
                                       password: '',
                                       color: HttpHelper.default_note_color!.value),
-                                  childCurrent: this.widget));
+                                  childCurrent: this.widget)).then((_) { setState(() {}); });
                         },
                         tooltip: 'New note',
                         child: const Icon(Icons.add),
@@ -717,7 +716,7 @@ class _NotesPageState extends State<NotesPage> {
                                                     blur: HttpHelper.display_notes[i]["blur"],
                                                     password: password_temp,
                                                     color: HttpHelper.display_notes[i]["color"] ?? HttpHelper.default_note_color!.value),
-                                                childCurrent: this.widget));
+                                                childCurrent: this.widget)).then((_) { setState(() {}); });
                                       }
                                       else
                                       {
@@ -754,7 +753,7 @@ class _NotesPageState extends State<NotesPage> {
                                           blur: HttpHelper.display_notes[i]["blur"],
                                           password: '',
                                           color: HttpHelper.display_notes[i]["color"] ?? HttpHelper.default_note_color!.value),
-                                      childCurrent: this.widget));
+                                      childCurrent: this.widget)).then((_) { setState(() {}); });
                             }
                           },
                           onLongPress: () {
@@ -780,10 +779,10 @@ class _NotesPageState extends State<NotesPage> {
                         ),
                     ],
                   ) : ReorderableBuilder(
-                    children: HttpHelper.get_new_ordering_notes(context, this.widget),
+                    children: HttpHelper.get_new_ordering_notes(context, this.widget, () { setState(() {}); }),
                     scrollController: _scrollController,
                     onReorder: (ReorderedListFunction reorderedListFunction) async {
-                      List<dynamic> old_list = HttpHelper.get_new_ordering_notes(context, this.widget);
+                      List<dynamic> old_list = HttpHelper.get_new_ordering_notes(context, this.widget, () { setState(() {}); });
                       List<dynamic> new_list = reorderedListFunction(old_list);
 
                       int first_index = -1, last_index = -1;

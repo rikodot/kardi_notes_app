@@ -49,8 +49,17 @@ class _LoadingPageState extends State<LoadingPage> {
           buttons: [
             DialogButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        alignment: Alignment.bottomCenter,
+                        curve: Curves.easeInOut,
+                        duration: Duration(milliseconds: 600),
+                        reverseDuration: Duration(milliseconds: 600),
+                        type: PageTransitionType.size,
+                        child: LoadingPage(),
+                        childCurrent: this.widget)).then((_) { setState(() {}); });
               },
               child: Text('Retry', style: Styles.alert_button()),
             ),
@@ -82,7 +91,7 @@ class _LoadingPageState extends State<LoadingPage> {
           DialogButton(
             onPressed: () {
               stop_loading_animation = false;
-              Navigator.of(context).pop();
+              Navigator.pop(context);
             },
             child: Text('OK', style: Styles.alert_button()),
           ),
@@ -111,8 +120,17 @@ class _LoadingPageState extends State<LoadingPage> {
           buttons: [
             DialogButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        alignment: Alignment.bottomCenter,
+                        curve: Curves.easeInOut,
+                        duration: Duration(milliseconds: 600),
+                        reverseDuration: Duration(milliseconds: 600),
+                        type: PageTransitionType.size,
+                        child: LoadingPage(),
+                        childCurrent: this.widget)).then((_) { setState(() {}); });
               },
               child: Text('Retry', style: Styles.alert_button()),
             ),
@@ -148,8 +166,17 @@ class _LoadingPageState extends State<LoadingPage> {
           buttons: [
             DialogButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        alignment: Alignment.bottomCenter,
+                        curve: Curves.easeInOut,
+                        duration: Duration(milliseconds: 600),
+                        reverseDuration: Duration(milliseconds: 600),
+                        type: PageTransitionType.size,
+                        child: LoadingPage(),
+                        childCurrent: this.widget)).then((_) { setState(() {}); });
               },
               child: Text('Retry', style: Styles.alert_button()),
             ),
@@ -179,15 +206,24 @@ class _LoadingPageState extends State<LoadingPage> {
           buttons: [
             DialogButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        alignment: Alignment.bottomCenter,
+                        curve: Curves.easeInOut,
+                        duration: Duration(milliseconds: 600),
+                        reverseDuration: Duration(milliseconds: 600),
+                        type: PageTransitionType.size,
+                        child: LoadingPage(),
+                        childCurrent: this.widget)).then((_) { setState(() {}); });
               },
               child: Text('Retry', style: Styles.alert_button()),
             ),
             DialogButton(
               onPressed: () {
                 stop_loading_animation = false;
-                Navigator.of(context).pop();
+                Navigator.pop(context);
               },
               child: Text('Continue with default api config', style: Styles.alert_button()),
             ),
@@ -240,8 +276,17 @@ class _LoadingPageState extends State<LoadingPage> {
           buttons: [
             DialogButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        alignment: Alignment.bottomCenter,
+                        curve: Curves.easeInOut,
+                        duration: Duration(milliseconds: 600),
+                        reverseDuration: Duration(milliseconds: 600),
+                        type: PageTransitionType.size,
+                        child: LoadingPage(),
+                        childCurrent: this.widget)).then((_) { setState(() {}); });
               },
               child: Text('Retry', style: Styles.alert_button()),
             ),
@@ -306,7 +351,7 @@ class _LoadingPageState extends State<LoadingPage> {
               if (can_ignore) DialogButton(
                 onPressed: () {
                   stop_loading_animation = false;
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
                 child: Text('Ignore', style: Styles.alert_button()),
               ),
@@ -325,8 +370,17 @@ class _LoadingPageState extends State<LoadingPage> {
             buttons: [
               DialogButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      PageTransition(
+                          alignment: Alignment.bottomCenter,
+                          curve: Curves.easeInOut,
+                          duration: Duration(milliseconds: 600),
+                          reverseDuration: Duration(milliseconds: 600),
+                          type: PageTransitionType.size,
+                          child: LoadingPage(),
+                          childCurrent: this.widget)).then((_) { setState(() {}); });
                 },
                 child: Text('Retry', style: Styles.alert_button()),
               ),
@@ -416,7 +470,7 @@ class _LoadingPageState extends State<LoadingPage> {
                       buttons: [],
                     ).show();
                   }
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
               ),
             ),
@@ -444,8 +498,17 @@ class _LoadingPageState extends State<LoadingPage> {
           buttons: [
             DialogButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoadingPage()));
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        alignment: Alignment.bottomCenter,
+                        curve: Curves.easeInOut,
+                        duration: Duration(milliseconds: 600),
+                        reverseDuration: Duration(milliseconds: 600),
+                        type: PageTransitionType.size,
+                        child: LoadingPage(),
+                        childCurrent: this.widget)).then((_) { setState(() {}); });
               },
               child: Text('Retry', style: Styles.alert_button()),
             ),
@@ -461,7 +524,16 @@ class _LoadingPageState extends State<LoadingPage> {
     if (stop_loading_animation) { setState(() {}); return; }
 
     HttpHelper.connected = true;
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => NotesPage()));
+    Navigator.push(
+        context,
+        PageTransition(
+            alignment: Alignment.bottomCenter,
+            curve: Curves.easeInOut,
+            duration: Duration(milliseconds: 600),
+            reverseDuration: Duration(milliseconds: 600),
+            type: PageTransitionType.size,
+            child: NotesPage(),
+            childCurrent: this.widget)).then((_) { setState(() {}); });
   }
 
   @override
@@ -500,7 +572,7 @@ class _LoadingPageState extends State<LoadingPage> {
                                 reverseDuration: Duration(milliseconds: 600),
                                 type: PageTransitionType.size,
                                 child: SettingsPage(),
-                                childCurrent: this.widget));
+                                childCurrent: this.widget)).then((_) { setState(() {}); });
                       },
                       tooltip: 'Settings',
                       child: const Icon(Icons.settings),

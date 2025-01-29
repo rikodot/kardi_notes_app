@@ -171,7 +171,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                       }
                     }
                   });
-                  Navigator.pop(context); //pop alert
+                  Navigator.pop(context);
                   last_bg_done = true; //this bool prevents stacking multiple alerts on top of each other
                 },
                 child: Text("Yes", style: Styles.alert_button()),
@@ -179,7 +179,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
               DialogButton(
                 onPressed: () {
                   last_bg_done = true; //this bool prevents stacking multiple alerts on top of each other
-                  Navigator.pop(context); //pop alert
+                  Navigator.pop(context);
                 },
                 child: Text("No", style: Styles.alert_button()),
               )
@@ -449,14 +449,14 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                         duration: Duration(seconds: 3),
                                       ));
                                     }
-                                    Navigator.of(context).pop();
+                                    Navigator.pop(context);
                                   });
                                 },
                               ),
                               DialogButton(
                                 child: Icon(Icons.cancel_outlined),
                                 onPressed: () {
-                                  Navigator.of(context).pop();
+                                  Navigator.pop(context);
                                 },
                               ),
                             ],
@@ -824,15 +824,15 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                         if (confirm_text.toLowerCase().replaceAll(" ", "") == "confirm")
                                         {
                                           confirmed = true;
-                                          Navigator.of(context).pop();
+                                          Navigator.pop(context);
                                         }
                                       },
                                     ),
                                     DialogButton(
                                       child: Icon(Icons.cancel_outlined),
                                       onPressed: () {
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
                                       },
                                     ),
                                   ],
@@ -851,21 +851,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                                       buttons: [],
                                     ).show();
                                   } else {
-                                    Navigator.of(context).pop();
-                                    Navigator.push(
-                                        context,
-                                        /*MaterialPageRoute(
-                                              builder: (BuildContext context) => NotesPage()));*/
-                                        PageTransition(
-                                            alignment: Alignment.bottomCenter,
-                                            curve: Curves.easeInOut,
-                                            duration:
-                                            Duration(milliseconds: 600),
-                                            reverseDuration:
-                                            Duration(milliseconds: 600),
-                                            type: PageTransitionType.size,
-                                            child: NotesPage(),
-                                            childCurrent: this.widget));
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
                                   }
                                 });
                               }
@@ -874,7 +861,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                           DialogButton(
                             child: Icon(Icons.cancel_outlined),
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              Navigator.pop(context);
                             },
                           ),
                         ],
@@ -882,18 +869,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                     }
                     /* no content, no confirmation */
                     else {
-                      Navigator.push(
-                          context,
-                          /*MaterialPageRoute(
-                              builder: (BuildContext context) => NotesPage()));*/
-                          PageTransition(
-                              alignment: Alignment.bottomCenter,
-                              curve: Curves.easeInOut,
-                              duration: Duration(milliseconds: 600),
-                              reverseDuration: Duration(milliseconds: 600),
-                              type: PageTransitionType.size,
-                              child: NotesPage(),
-                              childCurrent: this.widget));
+                      Navigator.pop(context);
                     }
                   },
                   tooltip: 'Delete note',
@@ -975,22 +951,13 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                             child: Icon(Icons.check),
                             onPressed: () async {
                               Navigator.pop(context);
-                              Navigator.push(context,
-                                  /*MaterialPageRoute(builder: (BuildContext context) => NotesPage()));*/
-                                  PageTransition(
-                                      alignment: Alignment.bottomCenter,
-                                      curve: Curves.easeInOut,
-                                      duration: Duration(milliseconds: 600),
-                                      reverseDuration: Duration(milliseconds: 600),
-                                      type: PageTransitionType.size,
-                                      child: NotesPage(),
-                                      childCurrent: this.widget));
+                              Navigator.pop(context);
                             },
                           ),
                           DialogButton(
                             child: Icon(Icons.cancel_outlined),
                             onPressed: () async {
-                              Navigator.of(context).pop();
+                              Navigator.pop(context);
                             },
                           ),
                         ],
@@ -999,16 +966,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                     /* no changes, no confirmation */
                     else
                     {
-                      Navigator.push(context,
-                          /*MaterialPageRoute(builder: (BuildContext context) => NotesPage()));*/
-                          PageTransition(
-                              alignment: Alignment.bottomCenter,
-                              curve: Curves.easeInOut,
-                              duration: Duration(milliseconds: 600),
-                              reverseDuration: Duration(milliseconds: 600),
-                              type: PageTransitionType.size,
-                              child: NotesPage(),
-                              childCurrent: this.widget));
+                      Navigator.pop(context);
                     }
                   },
                   tooltip: 'Back to notes',

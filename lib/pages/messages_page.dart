@@ -118,7 +118,7 @@ class _MessagesPageState extends State<MessagesPage> {
                       DialogButton(
                         child: Text("Cancel", style: Styles.alert_button()),
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.pop(context);
                           _feedbackController.clear();
                         },
                       ),
@@ -160,7 +160,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                 desc: "Feedback sent successfully.",
                                 buttons: [],
                               ).show().then((val) {
-                                Navigator.of(context).pop();
+                                Navigator.pop(context);
                                 _feedbackController.clear();
                                 setState(() {});
                               });
@@ -207,17 +207,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 if (_isOpened) FloatingActionButton(
                   heroTag: null,
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        PageTransition(
-                            alignment: Alignment.bottomCenter,
-                            curve: Curves.easeInOut,
-                            duration: Duration(milliseconds: 600),
-                            reverseDuration: Duration(milliseconds: 600),
-                            type: PageTransitionType.size,
-                            child: NotesPage(),
-                            childCurrent: this.widget)
-                    );
+                    Navigator.pop(context);
                   },
                   tooltip: 'Back to notes',
                   child: const Icon(Icons.arrow_back),
@@ -267,16 +257,7 @@ class _MessagesPageState extends State<MessagesPage> {
               }
               else if (length > 0 && length > available_height / 3)
               {
-                Navigator.push(
-                    context,
-                    PageTransition(
-                        alignment: Alignment.bottomCenter,
-                        curve: Curves.easeInOut,
-                        duration: Duration(milliseconds: 600),
-                        reverseDuration: Duration(milliseconds: 600),
-                        type: PageTransitionType.size,
-                        child: NotesPage(),
-                        childCurrent: this.widget));
+                Navigator.pop(context);
               }
             },
             child: ListView.builder(
@@ -308,8 +289,7 @@ class _MessagesPageState extends State<MessagesPage> {
                               reverseDuration: Duration(milliseconds: 600),
                               type: PageTransitionType.size,
                               child: OpenMsgPage(index: index),
-                              childCurrent: this.widget)
-                      );
+                              childCurrent: this.widget)).then((_) { setState(() {}); });
                     },
                   ),
                 );

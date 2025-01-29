@@ -105,7 +105,7 @@ class HttpHelper
     title_height = 18 * scale;
   }
 
-  static List<Widget> get_new_ordering_notes(BuildContext context, Widget childCurrent)
+  static List<Widget> get_new_ordering_notes(BuildContext context, Widget childCurrent, VoidCallback refresh_func)
   {
     List<Widget> list = List.generate(HttpHelper.display_notes.length, (i) =>
         GestureDetector(
@@ -165,7 +165,7 @@ class HttpHelper
                                     blur: HttpHelper.display_notes[i]["blur"],
                                     password: password_temp,
                                     color: HttpHelper.display_notes[i]["color"] ?? HttpHelper.default_note_color!.value),
-                                childCurrent: childCurrent));
+                                childCurrent: childCurrent)).then((_) { refresh_func(); });
                       }
                       else
                       {
@@ -203,7 +203,7 @@ class HttpHelper
                           password: '',
                           color: HttpHelper.display_notes[i]["color"] ??
                               HttpHelper.default_note_color!.value),
-                      childCurrent: childCurrent));
+                      childCurrent: childCurrent)).then((_) { refresh_func(); });
             }
           },
           //onLongPress: () {} //cant use long press, because it is used for dragging
@@ -1650,7 +1650,7 @@ class HttpHelper
               SizedBox(height: 20),
               DialogButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
                 child: Text('Use default server', style: Styles.alert_button()),
               ),
@@ -1676,7 +1676,7 @@ class HttpHelper
                         {
                           var ret = await HttpHelper.ensure_config();
                           if (ret[0] == 0) { await HttpHelper.set_custom_api_cfg(true, custom_api_url); }
-                          Navigator.of(context).pop();
+                          Navigator.pop(context);
                         }
                       }
                   ),

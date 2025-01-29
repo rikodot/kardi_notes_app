@@ -591,17 +591,7 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
               if (_isOpened) FloatingActionButton(
                 heroTag: null,
                 onPressed: () {
-                  Navigator.pop(context); //because we can get here from different pages
-                  /*Navigator.push(
-                      context,
-                      PageTransition(
-                          alignment: Alignment.bottomCenter,
-                          curve: Curves.easeInOut,
-                          duration: Duration(milliseconds: 600),
-                          reverseDuration: Duration(milliseconds: 600),
-                          type: PageTransitionType.size,
-                          child: NotesPage(),
-                          childCurrent: this.widget));*/
+                  Navigator.pop(context);
                 },
                 tooltip: 'Back to notes',
                 child: const Icon(Icons.arrow_back),

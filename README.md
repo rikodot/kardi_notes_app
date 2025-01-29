@@ -39,11 +39,10 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] note content & feedback content limit 65535 - we limit to plain 40000 and check if encrypted 65535 - stop 40k check and do better > 65535 error so user knows
 - [ ] no need to send passwords to the server
 - [ ] option to highlight text in notes
-- [ ] fdroid first startup entering custom url goes out of boundary and bugs out
 - [ ] different update link for fdroid, apk and google play
 - [ ] create new note -> spam save button fast -> go back -> multiple same new notes (only locally)
 - [ ] add android:allowBackup flag and set to false so people cant copy the data from the phone using adb
-- [ ] when setting custom url (in settings or loading screen), check if it is correct before saving
+- [ ] when setting custom url (in settings or loading screen), verify if it is correct before saving
 - [ ] more verbose error messages in versionCheck (not always "notok")
 - [ ] better internet connectivity check (maybe also check if can connect to api)
 - [ ] optional log file of actions with ability to upload to server
@@ -58,7 +57,6 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] change package name when debugging so it does not replace original like add _dev and for google play remove it?
 - [ ] bug: on smaller logical ppi settings custom api and scale put on separate lines or smth
 - [ ] floating action button - right now i use padding 70px to make sure it is not over some text, find a better way
-- [ ] Navigator.push() -> Navigator.pushReplacement() ?? will back button on android still work? (right now we end up with multiple instances over each other - not documented probably) (https://docs.flutter.dev/ui/navigation)
 - [ ] `onPressed: ()` etc can be async e.g. msgs pop ups, might be easier than `.then()` I surely used many times and is not blocking UI
 - [ ] reset notes order button: set all last/next keys to null and first element to null, should force order by creation date
 - [ ] rename package to tech.kardi.notes
@@ -83,16 +81,18 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] toggle animations option
 - [ ] new owner key -> has messages -> opens message -> goes back using android back button, not the icon back button in app -> still shows unread messages on messages page button (does not update ui)
 - [ ] last access time, last edit time ??
-- [ ] allow back button on phone, definitely pop context before changing to new page cuz memory leak or just too many opened after some time?
 - [ ] test delete note and then on other device edit the deleted note or smth
 - [ ] test open app, delete session and what happens?
 - [ ] password on startup that is used to encrypt owner key (if somebody stole the phone and knew what he was looking for, this would prevent him from decrypting notes)
 - [ ] qr to transfer owner key (buttons: show qr and scan on other device to import there, show qr and scan on other device to import here (for pc), scan qr)
 - [ ] mby dont call setState inside of @override initState? e.g. editor_page.dart
-- [ ] custom button color
 - [ ] highlight mismatch alerts with red color
 - [ ] color not saved when note not saved yet
 - [ ] background checks are a complete mess - false positives, rework completely possibly
+- [x] fdroid first startup entering custom url goes out of boundary and bugs out
+- [x] Navigator.push() -> Navigator.pushReplacement() ?? will back button on android still work? (right now we end up with multiple instances over each other - not documented probably) (https://docs.flutter.dev/ui/navigation)
+- [x] custom button color
+- [x] allow back button on phone, definitely pop context before changing to new page cuz memory leak or just too many opened after some time?
 - [x] settings page needs white bg on the bottom just like edit page because on phone if setting custom api keyboard moves it up and it overlaps
 - [x] send feedback close the prompt
 - [x] replies and feedbacks do not sort together

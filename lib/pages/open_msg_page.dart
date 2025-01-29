@@ -76,16 +76,7 @@ class _OpenMsgPageState extends State<OpenMsgPage> with SingleTickerProviderStat
                 if (_isOpened) FloatingActionButton(
                   heroTag: null,
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        PageTransition(
-                            alignment: Alignment.bottomCenter,
-                            curve: Curves.easeInOut,
-                            duration: Duration(milliseconds: 600),
-                            reverseDuration: Duration(milliseconds: 600),
-                            type: PageTransitionType.size,
-                            child: MessagesPage(),
-                            childCurrent: this.widget));
+                    Navigator.pop(context);
                   },
                   tooltip: 'Back to notes',
                   child: const Icon(Icons.arrow_back),
