@@ -191,6 +191,68 @@ class _LoadingPageState extends State<LoadingPage> {
     print("transferring config done");
     if (stop_loading_animation) { setState(() {}); return; }
 
+    //main pass
+    if (HttpHelper.main_pass)
+    {
+      can_continue = false;
+      String main_pass_temp = '';
+      await Alert(
+        style: Styles.alert_norm(),
+        context: context,
+        title: 'Main password',
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: TextEditingController(),
+                    onChanged: (value) { main_pass_temp = value; },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Enter your password',
+                    ),
+                    obscureText: true,
+                  ),
+                ),
+                IconButton(
+                    icon: Icon(Icons.arrow_right),
+                    iconSize: 24,
+                    onPressed: () async {
+                      if (main_pass_temp.isNotEmpty)
+                      {
+                        HttpHelper.main_pass_str = main_pass_temp;
+                        if (await HttpHelper.test_main_pass()) { Navigator.pop(context); }
+                        else
+                        {
+                          HttpHelper.main_pass_str = null;
+                          main_pass_temp = '';
+                          await Alert(
+                            style: Styles.alert_closable(),
+                            context: context,
+                            title: 'ERROR',
+                            desc: 'Invalid password',
+                            buttons: [],
+                          ).show();
+                          print("invalid main password dialog closed");
+                        }
+                      }
+                    }
+                ),
+              ],
+            ),
+          ],
+        ),
+        buttons: [],
+      ).show();
+      print("main pass dialog closed");
+      can_continue = true;
+    }
+    while (!can_continue) { await Future.delayed(const Duration(milliseconds: 100)); }
+    print("main pass done");
+    if (stop_loading_animation) { setState(() {}); return; }
+
     //get custom api cfg
     can_continue = false;
     HttpHelper.get_custom_api_cfg().then((value) async

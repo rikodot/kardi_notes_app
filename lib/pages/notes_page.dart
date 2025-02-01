@@ -432,6 +432,124 @@ class _NotesPageState extends State<NotesPage> {
                         tooltip: 'Refresh notes',
                         child: const Icon(Icons.download),
                       ),
+                      /** MAIN PASSWORD **/
+                      if (_isOpened) FloatingActionButton(
+                        heroTag: null,
+                        onPressed: () async {
+                          String temp_password = HttpHelper.main_pass_str ?? '';
+                          await Alert(
+                            style: Styles.alert_norm(),
+                            context: context,
+                            title: 'Main password',
+                            content: Column(
+                              children: [
+                                //add multiline text explaining what password does
+                                const Text(
+                                  'This password will be used to encrypt your owner key. If you forget the password, everything will be lost forever.\n'
+                                      'If you want to remove the password, leave the field empty and press "Save".',
+                                  style: TextStyle(fontSize: 12),
+                                  textAlign: TextAlign.center,
+                                ),
+                                TextField(
+                                  controller: TextEditingController(
+                                    text: temp_password.isEmpty ? '' : HttpHelper.main_pass_str,
+                                  ),
+                                  obscureText: true,
+                                  decoration: const InputDecoration(
+                                      icon: Icon(Icons.lock),
+                                      labelText: 'Password'
+                                  ),
+                                  onChanged: (value) {
+                                    temp_password = value.trim();
+                                  },
+                                ),
+                              ],
+                            ),
+                            buttons: [
+                              DialogButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('Cancel', style: Styles.alert_button()),
+                              ),
+                              DialogButton(
+                                onPressed: () async {
+                                  //close this dialog
+                                  Navigator.pop(context);
+                                  //encrypt content if we have a password
+                                  if (HttpHelper.main_pass_str != temp_password)
+                                  {
+                                    HttpHelper.main_pass = true;
+                                    HttpHelper.main_pass_str = temp_password;
+                                    if (temp_password.isNotEmpty && await HttpHelper.set_custom_api_cfg(HttpHelper.custom_api, HttpHelper.custom_api_url) && await HttpHelper.changeOwnerKey(HttpHelper.owner_key))
+                                    {
+                                      HttpHelper.update_config_value("main_pass", HttpHelper.main_pass);
+                                      await Alert(
+                                        style: Styles.alert_closable(),
+                                        context: context,
+                                        title: 'Success',
+                                        desc: 'Password has been changed successfully.',
+                                        buttons: [],
+                                        closeFunction: () {
+                                          //we explicitly define close func as we need to refresh state
+                                          Navigator.pop(context);
+                                          setState(() {});
+                                        },
+                                      ).show();
+                                    }
+                                    else
+                                    {
+                                      HttpHelper.main_pass = false;
+                                      HttpHelper.main_pass_str = null;
+                                      await HttpHelper.set_custom_api_cfg(HttpHelper.custom_api, HttpHelper.custom_api_url);
+                                      await HttpHelper.changeOwnerKey(HttpHelper.owner_key);
+                                      HttpHelper.update_config_value("main_pass", HttpHelper.main_pass);
+                                      if (temp_password.isNotEmpty)
+                                      {
+                                        await Alert(
+                                          style: Styles.alert_closable(),
+                                          context: context,
+                                          title: 'Error',
+                                          desc: 'Failed to change the password. If there was a password before, it has been cleared and is no longer in use!!!',
+                                          buttons: [],
+                                        ).show();
+                                      }
+                                      else
+                                      {
+                                        await Alert(
+                                          style: Styles.alert_closable(),
+                                          context: context,
+                                          title: 'Success',
+                                          desc: 'Password has been cleared successfully.',
+                                          buttons: [],
+                                          closeFunction: () {
+                                            //we explicitly define close func as we need to refresh state
+                                            Navigator.pop(context);
+                                            setState(() {});
+                                          },
+                                        ).show();
+                                      }
+                                    }
+                                  }
+                                  else
+                                  {
+                                    await Alert(
+                                      style: Styles.alert_closable(),
+                                      context: context,
+                                      title: 'Error',
+                                      desc: 'The password is the same as the old one.',
+                                      buttons: [],
+                                    ).show();
+                                  }
+                                },
+                                child: Text('Save', style: Styles.alert_button()),
+                              ),
+                            ],
+                          ).show();
+                        },
+                        tooltip: 'Set main password',
+                        child: const Icon(Icons.key),
+                      ),
                       /** LINK DEVICE **/
                       if (_isOpened) FloatingActionButton(
                         heroTag: null,

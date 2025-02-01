@@ -21,6 +21,7 @@ void main() async {
     var transfer_value = await HttpHelper.transfer_old_cfg_to_new();
     if (transfer_value != true) { throw "transfer_value not true"; }
 
+    HttpHelper.main_pass = await HttpHelper.get_config_value("main_pass");
     HttpHelper.default_color = Color(await HttpHelper.get_config_value("default_color"));
     HttpHelper.default_brightness = await HttpHelper.get_config_value("default_brightness") ? Brightness.dark : Brightness.light;
   }

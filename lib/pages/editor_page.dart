@@ -627,7 +627,7 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                           ),
                           TextField(
                             controller: TextEditingController(
-                              text: widget.password.isEmpty ? '' : '\x00\x00\x00\x00\x00',
+                              text: widget.password.isEmpty ? '' : widget.password,
                             ),
                             obscureText: true,
                             decoration: const InputDecoration(
@@ -664,8 +664,8 @@ class _EditorPageState extends State<EditorPage> with SingleTickerProviderStateM
                               }
                               else
                               {
-                                //encrypt content if we have a password and only if its not the placeholder we use
-                                if (widget.password != temp_password && temp_password != '\x00\x00\x00\x00\x00')
+                                //encrypt content if we have a password
+                                if (widget.password != temp_password)
                                 {
                                   String hash_password = temp_password.isEmpty ? '' : HttpHelper.hash(temp_password);
                                   HttpHelper.changeNotePassword(widget.noteKey, widget.index == -1 ? '' : HttpHelper.notes[index_in_notes]["password"], hash_password).then((result) {
