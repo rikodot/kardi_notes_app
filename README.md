@@ -83,12 +83,12 @@ You might need to [setup signing](https://docs.flutter.dev/deployment/android), 
 - [ ] last access time, last edit time ??
 - [ ] test delete note and then on other device edit the deleted note or smth
 - [ ] test open app, delete session and what happens?
-- [ ] password on startup that is used to encrypt owner key (if somebody stole the phone and knew what he was looking for, this would prevent him from decrypting notes)
 - [ ] qr to transfer owner key (buttons: show qr and scan on other device to import there, show qr and scan on other device to import here (for pc), scan qr)
 - [ ] mby dont call setState inside of @override initState? e.g. editor_page.dart
 - [ ] highlight mismatch alerts with red color
 - [ ] color not saved when note not saved yet
 - [ ] background checks are a complete mess - false positives, rework completely possibly
+- [x] password on startup that is used to encrypt owner key (if somebody stole the phone and knew what he was looking for, this would prevent him from decrypting notes)
 - [x] fdroid first startup entering custom url goes out of boundary and bugs out
 - [x] Navigator.push() -> Navigator.pushReplacement() ?? will back button on android still work? (right now we end up with multiple instances over each other - not documented probably) (https://docs.flutter.dev/ui/navigation)
 - [x] custom button color

@@ -26,7 +26,7 @@ class _NoteMiniState extends State<NoteMini> {
         height: HttpHelper.note_mini_height,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: Colors.grey.shade500,
+          color: HttpHelper.default_brightness == Brightness.dark ? Colors.grey.shade600 : Colors.grey.shade300,
           borderRadius: BorderRadius.circular(8),
           //new ordering system inserts shadow on its own, in old we put it here
           boxShadow: [
