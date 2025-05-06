@@ -16,6 +16,11 @@ Source code for the server logic is in [this repository](https://github.com/riko
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
      alt="Get it on Google Play"
      height="80">](https://play.google.com/store/apps/details?id=github.rikodot.kardi_notes)
+     
+<em>`* app removed from google play as I refused to publicly share my private information (address, name, etc.)`</em>
+
+## Windows app flagged as malware
+This is a false positive, explained in detail in [this issue](https://github.com/rikodot/kardi_notes_app/issues/8). You can contact me directly to get unpacked files for windows, which are not flagged as malware, but this process have some downsides. If you are interested, read the mentioned issue. Thank you for understanding.
 
 ## Building
 You might need to [setup signing](https://docs.flutter.dev/deployment/android), as `key.properties` and `upload-keystore.jks` files are omitted from the source control.
